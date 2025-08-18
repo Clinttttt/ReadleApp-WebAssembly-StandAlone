@@ -1,0 +1,47 @@
+﻿@page "/"
+@inject BookApi bookApi
+@inject IndexDb db
+
+
+
+<PageTitle>Home</PageTitle>
+
+@if (Books is null)
+{
+    <h1>EmptyBook</h1>
+}else
+{
+    foreach (var book in Books)
+    {
+        if (book.Format != null && book.Format.TryGetValue("image/jpeg", out var CoverUrl))
+        {
+            <h1>@book.Title</h1>
+            <img src="@CoverUrl" />
+        }
+    }
+}
+
+
+@code{
+    public List<BookGutendex>? Books { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+             await Task.Delay(100);
+                Books = await db.GetTenBooks();
+                if (Books == null || Books.Count == 0)
+                {
+                    Books = await bookApi.MostRead();
+                    await db.SaveTenBooks(Books);
+                }
+            }
+
+        
+        catch (Exception ex)
+        {
+            Console.WriteLine("Erros" + ex.Message);
+        }
+        StateHasChanged();
+    }
+}
