@@ -1,17 +1,26 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ReadleApp.Client;
+using ReadleApp.Client.Services;
+using ReadleApp.Domain.Interface;
+using ReadleApp.Infrastructure.Services;
+using ReadleApp.Infrastructure.Services.IndexDb;
 using TG.Blazor.IndexedDB;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-builder.Services.AddScoped<BookApi>();
-builder.Services.AddScoped<IndexDb>();
+
+builder.Services.AddScoped<BookStateService>();
+builder.Services.AddScoped<BookClientServices>();
+builder.Services.AddScoped<IBookRespository, BookRespository>();
+builder.Services.AddScoped<BookApiServices>();
+builder.Services.AddScoped<PageState>();
+
 builder.Services.AddIndexedDB(dbStore =>
 {
     dbStore.DbName = "ReadleDb";
-    dbStore.Version = 3;
+    dbStore.Version = 4;
 
     dbStore.Stores.Add(new StoreSchema
     {
@@ -34,17 +43,21 @@ builder.Services.AddIndexedDB(dbStore =>
             new IndexSpec { Name = "Languages",     KeyPath = "Languages",     Auto = false },
             new IndexSpec { Name = "Summaries",     KeyPath = "Summaries",     Auto = false },
             new IndexSpec { Name = "Formats",       KeyPath = "Formats",       Auto = false },
-            new IndexSpec { Name = "CoverUrl",      KeyPath = "CoverUrl",      Auto = false }
+            new IndexSpec { Name = "CoverUrl",      KeyPath = "CoverUrl",      Auto = false },
+            new IndexSpec { Name = "Category",      KeyPath = "Category",      Auto = false }
         }
     });
 });
 
-builder.Services.AddScoped(sp => new HttpClient
+/*builder.Services.AddScoped(sp => new HttpClient
 {
     Timeout = TimeSpan.FromSeconds(30)
+});*/
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri("https://localhost:7033")
 });
 
-
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+/*builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });*/
 
 await builder.Build().RunAsync();

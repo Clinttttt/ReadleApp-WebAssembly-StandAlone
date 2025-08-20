@@ -1,0 +1,223 @@
+﻿@using ReadleApp.Client.Pages.Book.BookList.Adventure
+@using ReadleApp.Client.Pages.Book.BookList.Classics
+@using ReadleApp.Client.Pages.Book.BookList.History
+@using ReadleApp.Client.Pages.Book.BookList.Mystery
+@using ReadleApp.Client.Pages.Book.BookList.Poetry
+@using ReadleApp.Client.Pages.Book.BookList.Popular
+@using ReadleApp.Client.Pages.Book.BookList.Romance
+@using ReadleApp.Client.Pages.Book.BookList.Science
+@using ReadleApp.Client.Pages.Book.BookList.ShortStories
+@using ReadleApp.Client.Pages.Book.BookList.YoungReader
+@using ReadleApp.Client.Services
+@inject PageState pageState
+
+
+<!--Welcome to Readle-->
+<div class="p-4">
+    <h1 class="">Welcome to Readle</h1>
+    <p class=" text-xs mt-2 font-light">Discover a world of free books at your fingertips. From timeless classics to modern tales, your next adventure begins here. Happy reading!"</p>
+</div>
+
+
+<!--Everyone’s Talking About-->
+<div class=" w-full h-2 bg-zinc-700" style="border:solid 1px rgba(39, 39, 42)"></div>
+<h2 class="text-start -mt-2  p-4 text-xs font-normal">Everyone’s Talking About</h2>
+<div class=" w-full  -mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<div class="mt-2 ml-2 ">
+    <MostReader  />
+</div>
+<div class=" w-full mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<button @onclick="()=> pageState.SetView(PageState.PageView.ListMostPopular)" class="btn w-full border-0 shadow-md flex justify-between items-center  bg-transparent  ">
+    <span class="font-normal text-slate-500">See All</span>
+    <svg class="w-6 h-6 text-slate-600  " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m9 5 7 7-7 7" />
+    </svg>
+</button>
+
+
+
+
+
+<!--Adventure & Explorations-->
+<div class=" w-full  h-1 bg-zinc-700" style="border:solid 1px rgba(39, 39, 42)"></div>
+<h2 class="text-start -mt-2  p-4 text-xs font-normal">Adventure & Exploration</h2>
+<div class=" w-full  -mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<div class="mt-2 ml-2 ">
+    <AdventureLoopPage />
+</div>
+<div class=" w-full mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<button @onclick="()=> pageState.SetView(PageState.PageView.ListAdventure)" class="btn  w-full  border-0 shadow-md flex justify-between items-center  bg-transparent  ">
+    <span class="font-normal text-slate-500">See All</span>
+    <svg class="w-6 h-6 text-slate-500   " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m9 5 7 7-7 7" />
+    </svg>
+
+
+
+    <!--Romance & Relationships-->
+</button>
+<div class=" w-full  h-1 bg-zinc-700" style="border:solid 1px rgba(39, 39, 42)"></div>
+<h2 class="text-start -mt-2  p-4 text-xs font-normal">Romance & Relationships</h2>
+<div class=" w-full  -mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<div class="mt-2 ml-2 ">
+    <RomanceLoopPage />
+</div>
+<div class=" w-full mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<button @onclick="()=> pageState.SetView(PageState.PageView.ListRomance)" class=" btn w-full border-0 shadow-md flex justify-between items-center bg-transparent ">
+    <span class="font-normal text-slate-500">See All</span>
+    <svg class="w-6 h-6 text-slate-500   " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m9 5 7 7-7 7" />
+    </svg>
+
+</button>
+
+
+
+<!--Science Fiction & Fantasy-->
+<div class=" w-full  h-1 bg-zinc-700" style="border:solid 1px rgba(39, 39, 42)"></div>
+<h2 class="text-start -mt-2  p-4 text-xs font-normal">Science Fiction & Fantasy</h2>
+<div class=" w-full  -mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<div class="mt-2 ml-2 ">
+    <ScienceLoopPage />
+</div>
+
+<div class=" w-full mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<button @onclick="()=> pageState.SetView(PageState.PageView.ListScience)" class="btn  w-full  border-0 shadow-md flex justify-between items-center  bg-transparent  ">
+    <span class="font-normal text-slate-500">See All</span>
+    <svg class="w-6 h-6 text-slate-500   " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m9 5 7 7-7 7" />
+    </svg>
+
+</button>
+
+
+
+
+
+<!--Mystery, Thriller & Horror-->
+<div class=" w-full  h-1 bg-zinc-700" style="border:solid 1px rgba(39, 39, 42)"></div>
+<h2 class="text-start -mt-2  p-4 text-xs font-normal">Mystery, Thriller & Horror</h2>
+<div class=" w-full  -mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<div class="mt-2 ml-2 ">
+    <MysteryLoopPage />
+</div>
+
+<div class=" w-full mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<button @onclick="()=> pageState.SetView(PageState.PageView.ListMystery)" class="btn  w-full  border-0 shadow-md flex justify-between items-center  bg-transparent  ">
+    <span class="font-normal text-slate-500">See All</span>
+    <svg class="w-6 h-6 text-slate-500  " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m9 5 7 7-7 7" />
+    </svg>
+
+</button>
+
+
+
+<!--For Young Readers-->
+<div class=" w-full  h-1 bg-zinc-700" style="border:solid 1px rgba(39, 39, 42)"></div>
+<h2 class="text-start -mt-2  p-4 text-xs font-normal">For Young Readers</h2>
+<div class=" w-full  -mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<div class="mt-2 ml-2 ">
+    <YoungReaderLoopPage />
+</div>
+
+<div class=" w-full mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<button @onclick="()=> pageState.SetView(PageState.PageView.ListYoungReaders)" class="btn  w-full  border-0 shadow-md flex justify-between items-center  bg-transparent  ">
+    <span class="font-normal text-slate-500">See All</span>
+    <svg class="w-6 h-6 text-slate-500  " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m9 5 7 7-7 7" />
+    </svg>
+
+</button>
+
+<!--Poetry & Drama-->
+<div class=" w-full  h-1 bg-zinc-700" style="border:solid 1px rgba(39, 39, 42)"></div>
+<h2 class="text-start -mt-2  p-4 text-xs font-normal">Poetry & Drama</h2>
+<div class=" w-full  -mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<div class="mt-2 ml-2 ">
+    <PoetryLoopPage />
+</div>
+
+<div class=" w-full mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<button @onclick="()=> pageState.SetView(PageState.PageView.ListPoetry)" class="btn  w-full  border-0 shadow-md flex justify-between items-center  bg-transparent  ">
+    <span class="font-normal text-slate-500">See All</span>
+    <svg class="w-6 h-6 text-slate-500   " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m9 5 7 7-7 7" />
+    </svg>
+
+</button>
+
+
+<!--History, Philosophy & Culture-->
+<div class=" w-full  h-1 bg-zinc-700" style="border:solid 1px rgba(39, 39, 42)"></div>
+<h2 class="text-start -mt-2  p-4 text-xs font-normal">History, Philosophy & Culture</h2>
+<div class=" w-full  -mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<div class="mt-2 ml-2 ">
+    <HistoryLoopPage />
+</div>
+
+<div class=" w-full mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<button @onclick="()=> pageState.SetView(PageState.PageView.ListHistory)" class="btn  w-full  border-0 shadow-md flex justify-between items-center  bg-transparent  ">
+    <span class="font-normal text-slate-500">See All</span>
+    <svg class="w-6 h-6 text-slate-500   " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m9 5 7 7-7 7" />
+    </svg>
+
+</button>
+
+
+<!--Short Stories & Anthologies-->
+<div class=" w-full  h-1 bg-zinc-700" style="border:solid 1px rgba(39, 39, 42)"></div>
+<h2 class="text-start -mt-2  p-4 text-xs font-normal">Short Stories & Anthologies</h2>
+<div class=" w-full  -mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<div class="mt-2 ml-2 ">
+    <ShortStoriesLoopPage />
+</div>
+
+<div class=" w-full mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<button @onclick="()=> pageState.SetView(PageState.PageView.ListShortStories)" class="btn  w-full  border-0 shadow-md flex justify-between items-center  bg-transparent  ">
+    <span class="font-normal text-slate-500">See All</span>
+    <svg class="w-6 h-6 text-slate-500  " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m9 5 7 7-7 7" />
+    </svg>
+
+</button>
+
+
+
+
+<!--Classics & Timeless Reads-->
+<div class=" w-full  h-1 bg-zinc-700" style="border:solid 1px rgba(39, 39, 42)"></div>
+<h2 class="text-start -mt-2  p-4 text-xs font-normal">Classics & Timeless Reads</h2>
+<div class=" w-full  -mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<div class="mt-2 ml-2 ">
+    <ClassicLoopPage />
+</div>
+
+<div class=" w-full mt-2" style="border:solid 1px rgba(39, 39, 42)"></div>
+<button @onclick="()=> pageState.SetView(PageState.PageView.ListClassics)" class="btn  w-full  border-0 shadow-md flex justify-between items-center  bg-transparent  ">
+    <span class="font-normal text-slate-500">See All</span>
+    <svg class="w-6 h-6 text-slate-500  " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m9 5 7 7-7 7" />
+    </svg>
+
+</button>
+
+
+
+
+
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        pageState.Onchange += StateHasChanged;
+    }
+    private void Dispose()
+    {
+        pageState.Onchange -= StateHasChanged;
+    }
+
+
+}

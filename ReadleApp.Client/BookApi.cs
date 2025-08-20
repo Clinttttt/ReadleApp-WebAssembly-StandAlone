@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+﻿/*using System.Net.Http.Json;
 
 namespace ReadleApp.Client
 {
@@ -16,3 +16,4 @@ namespace ReadleApp.Client
         }
     }
 }
+*/

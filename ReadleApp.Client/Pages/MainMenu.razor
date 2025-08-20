@@ -1,0 +1,128 @@
+﻿@page "/MainMenu"
+@using ReadleApp.Client.Pages.Book
+@using ReadleApp.Client.Pages.Book.BookList
+@using ReadleApp.Client.Pages.Book.BookList.Adventure
+@using ReadleApp.Client.Pages.Book.BookList.Classics
+@using ReadleApp.Client.Pages.Book.BookList.History
+@using ReadleApp.Client.Pages.Book.BookList.Mystery
+@using ReadleApp.Client.Pages.Book.BookList.Poetry
+@using ReadleApp.Client.Pages.Book.BookList.Popular
+@using ReadleApp.Client.Pages.Book.BookList.Romance
+@using ReadleApp.Client.Pages.Book.BookList.Science
+@using ReadleApp.Client.Pages.Book.BookList.ShortStories
+@using ReadleApp.Client.Pages.Book.BookList.YoungReader
+@using ReadleApp.Client.Services
+@using ReadleApp.Domain.Interface
+@using ReadleApp.Infrastructure.Services
+@inject PageState pageState
+
+<div class=" flex flex-col justify-start items-center relative w-screen full overflow-hidden">
+
+    <!--t-->
+    <SearchPage />
+    <div class="left-0 w-full top-16 absolute" style="border:solid 1px rgba(39, 39, 42)"></div>
+
+    <!--scrl-->
+    <div class="mt-16  font-semibold min-h-0 h-[calc(100vh-8.0rem)] scrollbar-hide overflow-y-auto  w-full text-center">
+
+        @if (pageState.CurrentView == PageState.PageView.bookshelve)
+        {
+            <BookShelvesPage />
+        }
+        else if (pageState.CurrentView == PageState.PageView.ListMostPopular)
+        {
+            <PopularPickBook />
+        }
+        else if (pageState.CurrentView == PageState.PageView.ListAdventure)
+        {
+            <AdventurePage />
+        }
+        else if (pageState.CurrentView == PageState.PageView.ListScience)
+        {
+            <SciencePage />
+        }
+        else if (pageState.CurrentView == PageState.PageView.ListClassics)
+        {
+            <ClassicsPage />
+        }
+        else if (pageState.CurrentView == PageState.PageView.ListRomance)
+        {
+            <RomancePage />
+        }
+        else if (pageState.CurrentView == PageState.PageView.ListMystery)
+        {
+            <MysteryPage />
+        }
+        else if (pageState.CurrentView == PageState.PageView.ListYoungReaders)
+        {
+            <YoungReadersPage />
+        }
+        else if (pageState.CurrentView == PageState.PageView.ListPoetry)
+        {
+            <PoetryPage />
+        }
+        else if (pageState.CurrentView == PageState.PageView.ListHistory)
+        {
+            <HistoryPage />
+        }
+        else if (pageState.CurrentView == PageState.PageView.ListShortStories)
+        {
+            <ShortStories />
+        }
+
+
+
+    </div>
+    <!--d-->
+    <DockPage />
+</div>
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        pageState.Onchange += StateHasChanged;
+    }
+    private void Dispose()
+    {
+        pageState.Onchange -= StateHasChanged;
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--How they map to your original list:
+
+Popular Picks → Everyone’s Talking About
+
+Adventure & Exploration → Adventure Brave New Worlds
+
+Classics & Timeless Reads → Classics Timeless Masterpieces
+
+Romance & Relationships → Romance Passion & Everlasting Love
+
+Science Fiction & Fantasy → Sci-Fi Future Visions + Children’s Magical Journeys (fantasy overlap)
+
+Mystery, Thriller & Horror → Mystery, Horror
+
+For Young Readers → Children’s Books Magical Journeys
+
+Poetry & Drama → Poetry, Plays
+
+History, Philosophy & Culture → History, Philosophy, Religion
+
+Short Stories & Anthologies → Short Stories Small Tales Big Impact-->

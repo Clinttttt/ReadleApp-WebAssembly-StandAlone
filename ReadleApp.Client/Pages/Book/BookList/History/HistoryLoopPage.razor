@@ -1,0 +1,88 @@
+﻿@using ReadleApp.Client.Services
+@using ReadleApp.Domain.Interface
+@using ReadleApp.Domain.Model
+@using ReadleApp.Infrastructure.Services
+@inject BookApiServices bookApiServices
+@inject IBookRespository _db
+@inject BookClientServices bookClient
+@inject BookStateService bookState
+<div class="flex  overflow-x-scroll scrollbar-hide w-full">
+    <div class="gap-2 flex-nowrap flex ">
+        @if (!bookState.AllBook.ContainsKey("History") || bookState.AllBook["History"].Count == 0)
+        {
+            <h1>empty</h1>
+        }
+        else
+        {
+            @foreach (var book in bookState.AllBook["History"])
+            {
+                if (!string.IsNullOrEmpty(book.CoverUrl))
+                {
+                    <NavLink href="@($"/DisplayBook/{book.Id}")">
+                        <div class="relative flex-shrink-0  rounded-t-lg  w-20 h-32">
+
+                            <img class=" top-0 left-0 w-full h-full object-cover"
+                                 src="@book.CoverUrl"
+                                 alt="Book cover image" />
+                        </div>
+                    </NavLink>
+                }
+            }
+        }
+
+
+    </div>
+</div>
+
+@*@code {
+    public string? ImageUrl;
+    public int Limit = 10;
+    public List<BookGutendex>? Books { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Books = await _db.GetTenBookAsync("Adventure");
+        if(Books == null || Books.Count == 0)
+        {
+            Books = await bookClient.AdventureAsync();
+            await _db.SaveTenBookAsync(Books,"Adventure");
+        }
+        Books = Books.GroupBy(b => b.Id).Select(g => g.First()).ToList();
+
+        foreach (var book in Books)
+        {
+            if (string.IsNullOrEmpty(book.CoverUrl))
+            {
+                var BookFetch = await bookClient.BookCover(
+                    book.Title!, book.Authors!.FirstOrDefault()?.Name ?? "");
+                if (!string.IsNullOrEmpty(BookFetch))
+                {
+                    book.CoverUrl = BookFetch;
+                }
+                else
+                {
+                    book.CoverUrl = book.Format!.FirstOrDefault(s => s.Key.Contains("image")).Value ?? "";
+                }
+
+
+
+
+            }
+    }
+
+}
+}
+*@
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        bookState.OnChange += StateHasChanged;
+        await bookState.InitializeAsync();
+    }
+
+    public void Dispose()
+    {
+        bookState.OnChange -= StateHasChanged;
+    }
+}

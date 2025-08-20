@@ -1,6 +1,11 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
-namespace ReadleApp.Client
+namespace ReadleApp.Domain.Model
 {
     public class BookGutendex
     {
@@ -38,6 +43,7 @@ namespace ReadleApp.Client
 
 
         public string? Content { get; set; }
+        public string? Category { get; set; }
 
         public class Author
         {
@@ -50,10 +56,8 @@ namespace ReadleApp.Client
             [JsonPropertyName("death_year")]
             public int? DeathYear { get; set; }
         }
-       
+
+
     }
-    public class GutendexResponse
-    {
-        public List<BookGutendex>? Results { get; set; }
-    }
+    
 }

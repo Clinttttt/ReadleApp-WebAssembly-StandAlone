@@ -1,0 +1,37 @@
+﻿@page "/DisplayBook/{BookId:int}"
+@using ReadleApp.Domain.Model
+@inject HttpClient http
+
+
+
+
+<h3>DisplayBook</h3>
+
+@if (Title is null)
+{
+    <h1>Empty</h1>
+}
+else
+{
+    <h1>@Title</h1>
+    if (!string.IsNullOrEmpty(books?.Summaries?.FirstOrDefault()))
+    {
+        @*  <h4>@books.Summaries.First()</h4>*@
+    }
+}
+
+
+
+@code {
+    [Parameter]
+    public int BookId { get; set; }
+    string? Title;
+    public BookGutendex? books;
+
+    protected override async Task OnInitializedAsync()
+    {
+         books  = await http.GetFromJsonAsync<BookGutendex>($"https://gutendex.com/books/{BookId}");
+        Title = books!.Title;
+    }
+
+}

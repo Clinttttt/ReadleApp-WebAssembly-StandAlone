@@ -1,4 +1,4 @@
-html, body {
+/*html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -100,4 +100,17 @@ a, .btn-link {
 
 code {
     color: #c02d76;
+}
+*/
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+#blazor-error-ui {
+    display: none !important;
+}
+.loading-progress {
+    display: none
 }

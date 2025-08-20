@@ -1,4 +1,35 @@
 ﻿@page "/"
+@inject NavigationManager navigation
+
+
+<div class="flex flex-row justify-center items-center min-h-screen ">
+    <img class="@ImageClass" src="img/readle-cover.png" width="402" height="402" />
+</div>
+
+<!--<NavLink href="counter" class="btn">Get Started</NavLink>-->
+@code {
+    private string ImageClass = "hidden-before-animate";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+
+    {
+
+        if (firstRender)
+        {
+
+            ImageClass = "fade-in";
+            StateHasChanged();
+
+            await Task.Delay(2500);
+            navigation.NavigateTo("/MainMenu");
+
+        }
+    }
+
+}
+
+
+@*@page "/"
 @inject BookApi bookApi
 @inject IndexDb db
 
@@ -37,7 +68,7 @@
                 }
             }
 
-        
+
         catch (Exception ex)
         {
             Console.WriteLine("Erros" + ex.Message);
@@ -45,3 +76,4 @@
         StateHasChanged();
     }
 }
+*@

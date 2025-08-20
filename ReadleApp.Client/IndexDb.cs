@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿/*using System.Security.Cryptography.X509Certificates;
 using TG.Blazor.IndexedDB;
 
 namespace ReadleApp.Client
@@ -40,3 +40,4 @@ namespace ReadleApp.Client
 
     }
 }
+*/

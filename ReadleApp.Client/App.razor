@@ -1,4 +1,22 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@using ReadleApp.Client.Services
+@using ReadleApp.Domain.Interface
+@using ReadleApp.Domain.Model
+@using ReadleApp.Infrastructure.Services
+@using ReadleApp.Infrastructure.Services.IndexDb
+@inject BookStateService bookState
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        bookState.OnChange += StateHasChanged;
+        await bookState.InitializeAsync();
+    }
+
+    public void Dispose()
+    {
+        bookState.OnChange -= StateHasChanged;
+    }
+}
+<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -13,25 +31,55 @@
 
 
 
-@code {
-    @inject BookApi bookApi
-    @inject IndexDb db
+@*@code {
+    [Inject] private BookClientServices BookClient { get; set; } = default!;
+    [Inject] private BookApiServices bookApi { get; set; } = default!;
+    [Inject] private IBookRespository db { get; set; } = default!;
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            if (!await db.HasBook())
+
+            do
             {
-                var book = await bookApi.MostRead();
-                if (book is not null)
-                {
-                    await db.SaveTenBooks(book!);
-                    System.Console.WriteLine($"Books{book}");
-                }
-            }
+
+                var MostRead = await BookClient.MostReadAsync();
+                await db.SaveTenBookAsync(MostRead,"MostRead");
+
+                var Adventure = await BookClient.AdventureAsync();
+                await db.SaveTenBookAsync(Adventure, "Adventure");
+
+                var Romance = await BookClient.RomanceAsync();
+                await db.SaveTenBookAsync(Romance, "Romance");
+
+                var Science = await BookClient.ScienceAsync();
+                await db.SaveTenBookAsync(Science, "Science");
+
+                var Mystery = await BookClient.MysteryAsync();
+                await db.SaveTenBookAsync(Mystery, "Mystery");
+
+                var Children = await BookClient.ChildrenAsync();
+                await db.SaveTenBookAsync(Children, "Children");
+
+                var Poetry = await BookClient.PoetryAsync();
+                await db.SaveTenBookAsync(Poetry, "Poetry");
+
+                var History = await BookClient.HistoryAsync();
+                await db.SaveTenBookAsync(History, "History");
+
+                var ShortStories = await BookClient.ShortStoriesAsync();
+                await db.SaveTenBookAsync(ShortStories, "ShortStories");
+
+                var Classics = await BookClient.ClassicsAsync();
+                await db.SaveTenBookAsync(Classics, "Classics");
+
+            } while (!await db.HasAnyBooksAsync());
+
         }catch(Exception ex)
         {
             System.Console.WriteLine("Error" + ex.ToString());
         }
     }
-}
+}*@
+
+

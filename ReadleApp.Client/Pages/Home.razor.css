@@ -1,0 +1,17 @@
+﻿@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.hidden-before-animate {
+    opacity: 0; /* ensure invisible at load */
+}
+
+.fade-in {
+    animation: fadeIn 3s ease-in forwards;
+}
