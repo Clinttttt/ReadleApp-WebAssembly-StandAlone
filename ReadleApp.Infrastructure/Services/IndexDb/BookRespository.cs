@@ -19,10 +19,10 @@ namespace ReadleApp.Infrastructure.Services.IndexDb
             _db = db;
         }
        
-        public async Task SaveBookAsync(BookGutendex book)
+        public async Task SaveBookAsync(OpenLibraryModel book)
         {
 
-            var record = new StoreRecord<BookGutendex>
+            var record = new StoreRecord<OpenLibraryModel>
             {
                 Storename = "Books",
                 Data = book
@@ -31,40 +31,41 @@ namespace ReadleApp.Infrastructure.Services.IndexDb
             await _db.AddRecord(record);
         }
 
-        public async Task SaveTenBookAsync(List<BookGutendex> books)
+        public async Task SaveTenBookAsync(List<OpenLibraryModel> books)
         {
-            foreach (var book in books)
+            foreach (var book in books.Take(10))
             {
                 await SaveBookAsync(book);
             }
         }
-
-
-        public async Task<List<BookGutendex>> GetMostReadAsync(string Category)
+        public async Task<List<OpenLibraryModel>> GetTenBookAsync(string? category)
         {
-            var Results = await _db.GetRecords<BookGutendex>("Books");
+            var Results = await _db.GetRecords<OpenLibraryModel>("Books");
+
+            return Results.Where(b => b.Category!.Equals(category, StringComparison.OrdinalIgnoreCase)).Take(10).ToList();
+
+
+        }
+
+        public async Task<List<OpenLibraryModel>> GetMostReadAsync(string Category)
+        {
+            var Results = await _db.GetRecords<OpenLibraryModel>("Books");
             return Results.Where(s => s.Category!.Equals(Category)).ToList();
         }
-        public async Task<List<BookGutendex>> GetTenBookAsync(string? category)
+     
+
+
+
+        public async Task<List<OpenLibraryModel>> GetAllBooks()
         {
-            var Results = await _db.GetRecords<BookGutendex>("Books");
-            
-               return Results.Where(b => b.Category!.Equals(category, StringComparison.OrdinalIgnoreCase)).Take(10).ToList();
-            
- 
-        }
-
-
-
-        public async Task<List<BookGutendex>> GetAllBooks()
-        {
-            var result = await _db.GetRecords<BookGutendex>("Books");
+            var result = await _db.GetRecords<OpenLibraryModel>("Books");
             return result.ToList();
         }
 
-        public async Task<BookGutendex?> GetBookById(BookGutendex id)
+        public async Task<OpenLibraryModel?> GetBookById(int Bookid)
         {
-            return await _db.GetRecordById<BookGutendex, BookGutendex>("Books", id);
+            var temp = new OpenLibraryModel { Id = Bookid };
+            return await _db.GetRecordById<OpenLibraryModel, OpenLibraryModel>("Books", temp);
         }
 
         public async Task DeleteBook(int id)
@@ -73,12 +74,12 @@ namespace ReadleApp.Infrastructure.Services.IndexDb
         }
         public async Task<bool> HasBookEachTopicAsync(string topic)
         {
-            var books = await _db.GetRecords<BookGutendex>("Books");
+            var books = await _db.GetRecords<OpenLibraryModel>("Books");
             return books.Any(b => b.Subjects!.Any(s => s.Contains(topic, StringComparison.OrdinalIgnoreCase)));
         }
         public async Task<bool> HasAnyBooksAsync()
         {
-            var books = await _db.GetRecords<BookGutendex>("Books");
+            var books = await _db.GetRecords<OpenLibraryModel>("Books");
             return books.Count > 0;
         }
     }

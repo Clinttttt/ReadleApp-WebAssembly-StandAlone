@@ -10,7 +10,7 @@ namespace ReadleApp.Domain.Model
    public class OpenLibrarySearchResponse
     {
         public List<OpenLibraryDoc>? Docs { get; set; } = new();
-      
 
+        public List<int>? Covers { get; set; }
     }
 }

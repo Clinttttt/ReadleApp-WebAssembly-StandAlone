@@ -1,37 +1,63 @@
-﻿@page "/DisplayBook/{BookId:int}"
+﻿@page "/DisplayBook/{WorkKey}"
+@using ReadleApp.Client.Services
 @using ReadleApp.Domain.Model
+@using ReadleApp.Infrastructure.Services.IndexDb
+@using static ReadleApp.Domain.Model.OpenLibraryModel
 @inject HttpClient http
+@inject BookClientServices bookClient
+@inject BookRespository bookstorage
 
 
-
-
-<h3>DisplayBook</h3>
-
-@if (Title is null)
+@if (books == null)
 {
-    <h1>Empty</h1>
+    <h1>Empty Book</h1>
 }
 else
 {
-    <h1>@Title</h1>
-    if (!string.IsNullOrEmpty(books?.Summaries?.FirstOrDefault()))
-    {
-        @*  <h4>@books.Summaries.First()</h4>*@
-    }
-}
+    <h1>@books.Title</h1>
+    <img class=" top-0 left-0 w-full h-full object-cover"
+    src="@books.CoverUrl"
+    alt="Book cover image" />
+    <img />
 
+
+}
 
 
 @code {
     [Parameter]
-    public int BookId { get; set; }
+    public string? WorkKey { get; set; }
     string? Title;
-    public BookGutendex? books;
+    public OpenLibraryModel? books;
+    string? bookCover;
+    public bool loaded = false;
 
     protected override async Task OnInitializedAsync()
     {
-         books  = await http.GetFromJsonAsync<BookGutendex>($"https://gutendex.com/books/{BookId}");
-        Title = books!.Title;
+        string key = WorkKey!.StartsWith("/works/") ? WorkKey : "/works/" + WorkKey;
+        books = await http.GetFromJsonAsync<OpenLibraryModel>($"https://openlibrary.org{key}.json");
+
+        if (books!.Authors != null)
+        {
+            foreach (var workAuthor in books.Authors)
+            {
+                if (!string.IsNullOrEmpty(workAuthor.Author?.Key))
+                {
+                    var author = await http.GetFromJsonAsync<AuthRef>($"https://openlibrary.org{workAuthor.Author.Key}.json");
+                    workAuthor.Author.Name = author!.Name;
+                }
+            }
+
+        }
+        StateHasChanged();
     }
 
+    private string GetAuthorsString()
+    {
+        return books?.Authors != null
+            ? string.Join(", ", books.Authors.Where(a => !string.IsNullOrEmpty(a.Author?.Name)).Select(a => a.Author!.Name))
+            : string.Empty;
+    }
 }
+
+

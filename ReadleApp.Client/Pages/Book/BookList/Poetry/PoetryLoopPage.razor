@@ -16,14 +16,19 @@
         {
             @foreach (var book in bookState.AllBook["Poetry"])
             {
-                if (!string.IsNullOrEmpty(book.CoverUrl))
+                if (string.IsNullOrEmpty(book.CoverUrl))
                 {
-                    <NavLink href="@($"/DisplayBook/{book.Id}")">
+                    <h1>No Book Cover</h1>
+                }
+                else
+                {
+                    <NavLink href="@($"/DisplayBook/{book.WorkKey}")">
                         <div class="relative flex-shrink-0  rounded-t-lg  w-20 h-32">
 
                             <img class=" top-0 left-0 w-full h-full object-cover"
                                  src="@book.CoverUrl"
                                  alt="Book cover image" />
+                            <h1>@book.Title</h1>
                         </div>
                     </NavLink>
                 }
@@ -34,53 +39,13 @@
     </div>
 </div>
 
-@*@code {
-    public string? ImageUrl;
-    public int Limit = 10;
-    public List<BookGutendex>? Books { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        Books = await _db.GetTenBookAsync("Adventure");
-        if(Books == null || Books.Count == 0)
-        {
-            Books = await bookClient.AdventureAsync();
-            await _db.SaveTenBookAsync(Books,"Adventure");
-        }
-        Books = Books.GroupBy(b => b.Id).Select(g => g.First()).ToList();
-
-        foreach (var book in Books)
-        {
-            if (string.IsNullOrEmpty(book.CoverUrl))
-            {
-                var BookFetch = await bookClient.BookCover(
-                    book.Title!, book.Authors!.FirstOrDefault()?.Name ?? "");
-                if (!string.IsNullOrEmpty(BookFetch))
-                {
-                    book.CoverUrl = BookFetch;
-                }
-                else
-                {
-                    book.CoverUrl = book.Format!.FirstOrDefault(s => s.Key.Contains("image")).Value ?? "";
-                }
-
-
-
-
-            }
-    }
-
-}
-}
-*@
-
 @code {
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         bookState.OnChange += StateHasChanged;
-        await bookState.InitializeAsync();
-    }
 
+
+    }
     public void Dispose()
     {
         bookState.OnChange -= StateHasChanged;

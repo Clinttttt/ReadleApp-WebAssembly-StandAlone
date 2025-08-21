@@ -4,13 +4,15 @@
 @using ReadleApp.Infrastructure.Services
 @using ReadleApp.Infrastructure.Services.IndexDb
 @inject BookStateService bookState
+
+
 @code {
     protected override async Task OnInitializedAsync()
     {
         bookState.OnChange += StateHasChanged;
         await bookState.InitializeAsync();
-    }
 
+    }
     public void Dispose()
     {
         bookState.OnChange -= StateHasChanged;

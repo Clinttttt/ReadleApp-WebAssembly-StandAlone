@@ -20,7 +20,7 @@ builder.Services.AddScoped<PageState>();
 builder.Services.AddIndexedDB(dbStore =>
 {
     dbStore.DbName = "ReadleDb";
-    dbStore.Version = 4;
+    dbStore.Version = 11; 
 
     dbStore.Stores.Add(new StoreSchema
     {
@@ -33,26 +33,15 @@ builder.Services.AddIndexedDB(dbStore =>
         },
         Indexes = new List<IndexSpec>
         {
-            new IndexSpec { Name = "BookId",        KeyPath = "BookId",        Auto = false },
-            new IndexSpec { Name = "Content",       KeyPath = "Content",       Auto = false },
-            new IndexSpec { Name = "DownloadCount", KeyPath = "DownloadCount", Auto = false },
-            new IndexSpec { Name = "BookShelves",   KeyPath = "BookShelves",   Auto = false },
-            new IndexSpec { Name = "Subjects",      KeyPath = "Subjects",      Auto = false },
-            new IndexSpec { Name = "Title",         KeyPath = "Title",         Auto = false },
-            new IndexSpec { Name = "Authors",       KeyPath = "Authors",       Auto = false },
-            new IndexSpec { Name = "Languages",     KeyPath = "Languages",     Auto = false },
-            new IndexSpec { Name = "Summaries",     KeyPath = "Summaries",     Auto = false },
-            new IndexSpec { Name = "Formats",       KeyPath = "Formats",       Auto = false },
-            new IndexSpec { Name = "CoverUrl",      KeyPath = "CoverUrl",      Auto = false },
-            new IndexSpec { Name = "Category",      KeyPath = "Category",      Auto = false }
+            new IndexSpec { Name = "WorkKey",          KeyPath = "WorkKey", Auto = false },
+            new IndexSpec { Name = "Title",          KeyPath = "Title",          Auto = false },
+           new IndexSpec { Name = "CoverIdAt",      KeyPath = "CoverIdAt",      Auto = false },
+           new IndexSpec { Name = "EditionCount",   KeyPath = "EditionCount",   Auto = false },
+            new IndexSpec { Name = "Category",       KeyPath = "Category",       Auto = false }
         }
     });
 });
 
-/*builder.Services.AddScoped(sp => new HttpClient
-{
-    Timeout = TimeSpan.FromSeconds(30)
-});*/
 builder.Services.AddScoped(sp => new HttpClient
 {
     BaseAddress = new Uri("https://localhost:7033")
