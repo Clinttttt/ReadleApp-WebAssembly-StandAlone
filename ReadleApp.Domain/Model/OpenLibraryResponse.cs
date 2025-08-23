@@ -16,5 +16,12 @@ namespace ReadleApp.Domain.Model
 
         [JsonPropertyName("docs")]
         public List<OpenLibraryModel>? Docs { get; set; }
+
+    }
+    public class OpenEditionResponse
+    {
+
+        [JsonPropertyName("entries")]
+        public List<Edition>? Entries { get; set; }
     }
 }

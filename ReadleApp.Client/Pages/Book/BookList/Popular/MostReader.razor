@@ -14,17 +14,18 @@
         }
         else
         {
-           
+
             @foreach (var book in bookState.AllBook["MostRead"])
             {
-                if (string.IsNullOrEmpty(book.CoverUrl))
+                if (string.IsNullOrEmpty(book.CoverUrl) && string.IsNullOrEmpty(book.WorkKey))
                 {
                     <h1>No Book Cover</h1>
                 }
                 else
                 {
+                    System.Console.WriteLine($"Authorr: {book.AuthorNames}");
                     @* <NavLink href="@($"/DisplayBook/{Uri.EscapeDataString(book.WorkKey!)}")">*@
-                    <NavLink href="@($"/DisplayBook/{(book.Id!)}")">
+                    <NavLink href="@($"/DisplayBook/{(book.WorkString)}")">
                         <div class="relative flex-shrink-0  rounded-t-lg  w-20 h-32">
 
                             <img class=" top-0 left-0 w-full h-full object-cover"

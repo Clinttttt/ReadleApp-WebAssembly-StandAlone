@@ -20,7 +20,7 @@ builder.Services.AddScoped<PageState>();
 builder.Services.AddIndexedDB(dbStore =>
 {
     dbStore.DbName = "ReadleDb";
-    dbStore.Version = 11; 
+    dbStore.Version = 14;
 
     dbStore.Stores.Add(new StoreSchema
     {
@@ -33,11 +33,25 @@ builder.Services.AddIndexedDB(dbStore =>
         },
         Indexes = new List<IndexSpec>
         {
-            new IndexSpec { Name = "WorkKey",          KeyPath = "WorkKey", Auto = false },
-            new IndexSpec { Name = "Title",          KeyPath = "Title",          Auto = false },
-           new IndexSpec { Name = "CoverIdAt",      KeyPath = "CoverIdAt",      Auto = false },
-           new IndexSpec { Name = "EditionCount",   KeyPath = "EditionCount",   Auto = false },
-            new IndexSpec { Name = "Category",       KeyPath = "Category",       Auto = false }
+            new IndexSpec {Name = "WorkKey",         KeyPath = "WorkKey",        Auto = false},
+            new IndexSpec {Name = "Title",           KeyPath = "Title",          Auto = false},
+            new IndexSpec {Name = "CoverIdAt",       KeyPath = "CoverIdAt",      Auto = false},
+            new IndexSpec {Name = "EditionCount",    KeyPath = "EditionCount",   Auto = false},
+            new IndexSpec {Name = "Category",        KeyPath = "Category",       Auto = false},
+            new IndexSpec {Name = "Isbn13",          KeyPath = "Isbn13",         Auto = false},
+            new IndexSpec {Name = "languages",       KeyPath = "languages",      Auto = false},
+            new IndexSpec {Name = "DescriptionRaw",  KeyPath = "DescriptionRaw", Auto = false},
+            new IndexSpec {Name = "Subjects",        KeyPath = "Subjects",       Auto = false},
+            new IndexSpec {Name = "Ebooks",          KeyPath = "Ebooks",         Auto = false},
+            new IndexSpec {Name =  "Authors",        KeyPath = "Authors",        Auto = false},
+            new IndexSpec {Name =  "CoverIdAlt",     KeyPath = "CoverIdAlt",     Auto = false},
+            new IndexSpec {Name =  "PublishDate",    KeyPath = "PublishDate",    Auto = false},
+            new IndexSpec {Name =  "Formats",        KeyPath = "Formats",        Auto = false},
+            new IndexSpec {Name =  "Availability",   KeyPath = "Availability",   Auto = false},
+            new IndexSpec {Name =  "Identifier",     KeyPath = "Identifier",     Auto = false},         
+            new IndexSpec {Name =  "WorkKeys",       KeyPath = "WorkKeys",       Auto = false},
+
+
         }
     });
 });

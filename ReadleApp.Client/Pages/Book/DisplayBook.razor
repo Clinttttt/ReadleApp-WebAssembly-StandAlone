@@ -1,14 +1,24 @@
 ﻿@page "/DisplayBook/{WorkKey}"
 @using ReadleApp.Client.Services
+@using ReadleApp.Domain.Interface
 @using ReadleApp.Domain.Model
+@using ReadleApp.Infrastructure.Services
 @using ReadleApp.Infrastructure.Services.IndexDb
 @using static ReadleApp.Domain.Model.OpenLibraryModel
 @inject HttpClient http
 @inject BookClientServices bookClient
-@inject BookRespository bookstorage
+@inject IBookRespository bookstorage
+@inject BookStateService bookState
+@inject BookApiServices bookApi
 
 
-@if (books == null)
+
+
+
+
+
+
+@*@if (books == null)
 {
     <h1>Empty Book</h1>
 }
@@ -19,45 +29,157 @@ else
     src="@books.CoverUrl"
     alt="Book cover image" />
     <img />
+    <h1>@books.AuthorName</h1>
+    <h1>@books.DescriptionRaw</h1>
+    <h1>@books.Ebooks</h1>
+    <h1>@books.languages</h1>
+    <h1>@books.Subjects</h1>
+    <h1>@books.SubjectsString</h1>
+}
+*@
+
+
+
+
+
+@if(books != null)
+{
+    var list = books.Entries!.FirstOrDefault();
+    if (list is not null)
+    {
+        <h1>@list!.Availability</h1>
+        <h1>@list.Identifier</h1>
+        <h1>@list.WorkKeys</h1>
+    }
+    <h1>@books.Title</h1>
+    <p>@books.AuthorNames</p>
+
+    <h1>@books.Category</h1>
+    <h1>@books.Subjects</h1>
+    <img src="@books.CoverUrl" />
+
+    <h1>@books.Description</h1>
 
 
 }
+else
+{
+    <h1>No Book</h1>
+}
 
 
-@code {
+
+
+@code{
+
     [Parameter]
     public string? WorkKey { get; set; }
-    string? Title;
+    string? Author;
     public OpenLibraryModel? books;
     string? bookCover;
     public bool loaded = false;
+    public string? Isbn { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
-        string key = WorkKey!.StartsWith("/works/") ? WorkKey : "/works/" + WorkKey;
-        books = await http.GetFromJsonAsync<OpenLibraryModel>($"https://openlibrary.org{key}.json");
-
-        if (books!.Authors != null)
+        try
         {
-            foreach (var workAuthor in books.Authors)
+
+            books = await bookstorage.GetBookById(WorkKey!);
+            Console.WriteLine($"Authors1:{books?.AuthorNames}");
+            if (books == null)
             {
-                if (!string.IsNullOrEmpty(workAuthor.Author?.Key))
-                {
-                    var author = await http.GetFromJsonAsync<AuthRef>($"https://openlibrary.org{workAuthor.Author.Key}.json");
-                    workAuthor.Author.Name = author!.Name;
-                }
+                books = await bookClient.GetBookById(WorkKey!);
+                Console.WriteLine($"Authors2:{books?.AuthorNames}");
             }
 
         }
+
+       
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"Book fetch failed: {ex.Message}");
+            books = null;
+        }
         StateHasChanged();
+
+
+
     }
 
-    private string GetAuthorsString()
-    {
-        return books?.Authors != null
-            ? string.Join(", ", books.Authors.Where(a => !string.IsNullOrEmpty(a.Author?.Name)).Select(a => a.Author!.Name))
-            : string.Empty;
-    }
+
+      
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+    @*@code{
+    [Parameter]
+    public string? WorkKey { get; set; }
+    @inject HttpClient Http
+    public string? PlainText { get; set; }
+    public OpenLibraryModel? Books { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+
+
+
+        string url =  "https://ia600408.us.archive.org/11/items/alicesadventures00carr_16/alicesadventures00carr_16_djvu.txt";
+        PlainText = await Http.GetStringAsync(url);
+        Console.WriteLine($"Text:{PlainText}");
+
+    }
+}*@
+
+
+@*@page "/DisplayBook/{WorkKey}"
+@using ReadleApp.Client.Services
+@using ReadleApp.Domain.Interface
+@using ReadleApp.Domain.Model
+@inject BookClientServices bookClient
+@inject IBookRespository bookstorage
+@try
+{
+    @if (Books != null)
+    {
+       
+    }
+    else
+    {
+
+        <h1>Empty</h1>
+    }
+}catch(Exception ex)
+{
+    Console.WriteLine($"Error{ex.Message}");
+}
+
+
+@code{
+    [Parameter]
+    public string? WorkKey { get; set; }
+    @inject HttpClient Http
+    public string? PlainText { get; set; }
+    public OpenLibraryModel? Books { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        Books = await bookstorage.GetBookById(WorkKey!);
+
+
+
+    }
+}*@

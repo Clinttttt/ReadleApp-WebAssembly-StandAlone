@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadleApp.Infrastructure.Services;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace ReadleApp.Api.Controllers
@@ -115,16 +116,19 @@ namespace ReadleApp.Api.Controllers
             }
             return Ok(response.Take(10).ToList());
         }
-        [HttpGet("GetBookById")]
+        [HttpGet("GetBookById/{Id}")]
         public async Task<ActionResult> GetBookAsync(string Id)
         {
-            var response = await _bookApi!.GetBookAsync(Id);
+            string WorkString = Id!.Replace("/works/", "") ?? "";
+            var response = await _bookApi!.GetBookAsync(WorkString);
             if(response == null)
             {
                 return BadRequest(new { Message = "No Book" });
             }
             return Ok(response);
         }
+    
+
 
 
 

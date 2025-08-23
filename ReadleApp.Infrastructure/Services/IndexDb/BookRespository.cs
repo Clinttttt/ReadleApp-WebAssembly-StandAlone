@@ -1,4 +1,5 @@
-﻿using ReadleApp.Domain;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using ReadleApp.Domain;
 using ReadleApp.Domain.Interface;
 using ReadleApp.Domain.Model;
 using System;
@@ -40,9 +41,9 @@ namespace ReadleApp.Infrastructure.Services.IndexDb
         }
         public async Task<List<OpenLibraryModel>> GetTenBookAsync(string? category)
         {
-            var Results = await _db.GetRecords<OpenLibraryModel>("Books");
+            var Results = await _db.GetRecords<OpenLibraryModel>("Books") ?? new List<OpenLibraryModel>();
 
-            return Results.Where(b => b.Category!.Equals(category, StringComparison.OrdinalIgnoreCase)).Take(10).ToList();
+            return Results.Where(b => !string.IsNullOrEmpty(b.Category) && b.Category!.Equals(category, StringComparison.OrdinalIgnoreCase)).Take(10).ToList();
 
 
         }
@@ -62,10 +63,18 @@ namespace ReadleApp.Infrastructure.Services.IndexDb
             return result.ToList();
         }
 
-        public async Task<OpenLibraryModel?> GetBookById(int Bookid)
+        public async Task<OpenLibraryModel?> GetBookById(string? workkey)
         {
-            var temp = new OpenLibraryModel { Id = Bookid };
-            return await _db.GetRecordById<OpenLibraryModel, OpenLibraryModel>("Books", temp);
+           
+            if (string.IsNullOrEmpty(workkey))
+            {
+                return null;
+            }
+
+            var Results = await _db.GetRecords<OpenLibraryModel>("Books");
+
+            return Results.FirstOrDefault(s => s.WorkKey == workkey);
+
         }
 
         public async Task DeleteBook(int id)

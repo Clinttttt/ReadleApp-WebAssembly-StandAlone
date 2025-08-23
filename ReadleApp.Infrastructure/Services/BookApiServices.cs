@@ -2,11 +2,13 @@
 using ReadleApp.Domain.Model;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace ReadleApp.Infrastructure.Services
 {
@@ -18,17 +20,30 @@ namespace ReadleApp.Infrastructure.Services
         {
             _http = http;
         }
-    
-        public async Task<OpenLibraryModel?> GetBookAsync(string Id)
-        {
-            return await _http.GetFromJsonAsync<OpenLibraryModel>($"https://openlibrary.org{Id}.json");
-            
+
+     
+
+            public async Task<OpenLibraryModel?> GetBookAsync(string workkey)
+        { var responsework = await _http.GetFromJsonAsync<OpenLibraryModel>($"https://openlibrary.org/works/{workkey}.json");
+            var editionsResponse = await _http.GetFromJsonAsync<OpenEditionResponse>($"https://openlibrary.org/works/{workkey}/editions.json");
+            if (editionsResponse is not null) 
+            {
+                foreach (var editionkey in editionsResponse!.Entries!) 
+                { editionkey.WorkKeys = responsework!.WorkKey;
+                }
+                responsework!.Entries = editionsResponse.Entries;
+            } return responsework;
         }
-        public async Task<List<OpenLibraryModel>> MostReadBookAsync()
+
+
+
+        public async Task<List<OpenLibraryModel>?> MostReadBookAsync()
         {
-            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/trending/monthly.json");
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/subjects/fantasy.json");
             return response!.Works!.Take(10).ToList() ?? new List<OpenLibraryModel>();
         }
+    
+
         public async Task<List<OpenLibraryModel>> AdventureAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/subjects/adventure.json");
@@ -138,5 +153,15 @@ namespace ReadleApp.Infrastructure.Services
                  var response = await _http.GetFromJsonAsync<GutendexResponse>($"https://gutendex.com/books?topic={encodedTopic}&page_size=10");
                  return response?.Results ?? new List<BookGutendex>();
              }*/
+
+
+
+
+
+
+        /*    public async Task<OpenLibraryModel?> GetBookEdition(string workkey)
+        {
+            return await _http.GetFromJsonAsync<OpenLibraryModel>($"https://openlibrary.org/works/{workkey}/editions.json");
+        }*/
     }
 }

@@ -1,5 +1,8 @@
 ﻿using ReadleApp.Domain.Interface;
 using ReadleApp.Domain.Model;
+using System.Net.Http.Json;
+using static ReadleApp.Domain.Model.OpenLibraryModel;
+using static System.Net.WebRequestMethods;
 
 namespace ReadleApp.Client.Services
 {
@@ -15,6 +18,7 @@ namespace ReadleApp.Client.Services
         {
             _db = db;
             _bookClient = bookClient;
+
         }
         private void NotifyStateChanged() => OnChange?.Invoke();
 
@@ -22,32 +26,28 @@ namespace ReadleApp.Client.Services
         {
             if (IsInitialized) return;
 
-          
-            await LoadCategoryAsync("MostRead");
-            NotifyStateChanged(); 
 
-          
-          
-          
-                var categories = new List<string>
+            await LoadCategoryAsync("MostRead");
+            NotifyStateChanged();
+
+
+
+
+            var categories = new List<string>
                 {
                     "Adventure", "Romance", "Science", "Mystery",
                     "Children", "Poetry", "History", "ShortStories", "Classics"
                 };
 
-                foreach (var category in categories)
-                {
-                    await LoadCategoryAsync(category);
-                    NotifyStateChanged(); 
-                }
+            foreach (var category in categories)
+            {
+                await LoadCategoryAsync(category);
+                NotifyStateChanged();
+            }
 
-                IsInitialized = true;
-            
+            IsInitialized = true;
+
         }
-
-
-
-
 
         private async Task LoadCategoryAsync(string category)
         {
@@ -70,17 +70,18 @@ namespace ReadleApp.Client.Services
                     _ => new List<OpenLibraryModel>()
                 };
 
-            
+
                 books = books.GroupBy(s => s.WorkKey)
                              .Select(s => s.First())
                              .Take(10)
                              .ToList();
-             
+
                 AllBook[category] = new List<OpenLibraryModel>();
 
                 foreach (var book in books.Take(10))
                 {
                     book.Category = category;
+
                     await _db.SaveBookAsync(book);
 
                     AllBook[category].Add(book);
@@ -91,6 +92,10 @@ namespace ReadleApp.Client.Services
 
             AllBook[category] = books;
         }
+
+
+       
+
     }
 }
 
@@ -98,3 +103,24 @@ namespace ReadleApp.Client.Services
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+/* public async Task<OpenLibraryModel?> GetBookByIsbnAsync(string isbn)
+        {
+            using var http = new HttpClient();
+            var url = $"https://openlibrary.org/api/books?bibkeys=ISBN:{isbn}&format=json&jscmd=data";
+
+            var response = await http.GetFromJsonAsync<Dictionary<string, OpenLibraryModel>>(url);
+
+            return response?[$"ISBN:{isbn}"];
+        }*/

@@ -13,7 +13,7 @@ namespace ReadleApp.Domain.Interface
         Task SaveBookAsync(OpenLibraryModel book);
         Task<List<OpenLibraryModel>> GetAllBooks();
         Task<List<OpenLibraryModel>> GetMostReadAsync(string Category);
-        Task<OpenLibraryModel?> GetBookById(int Bookid);
+        Task<OpenLibraryModel?> GetBookById(string Bookid);
         Task<bool> HasBookEachTopicAsync(string topic);
         Task SaveTenBookAsync(List<OpenLibraryModel> book);
         Task<List<OpenLibraryModel>> GetTenBookAsync(string? category = null);
