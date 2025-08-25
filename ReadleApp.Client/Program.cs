@@ -20,7 +20,7 @@ builder.Services.AddScoped<PageState>();
 builder.Services.AddIndexedDB(dbStore =>
 {
     dbStore.DbName = "ReadleDb";
-    dbStore.Version = 14;
+    dbStore.Version = 15;
 
     dbStore.Stores.Add(new StoreSchema
     {
@@ -50,6 +50,7 @@ builder.Services.AddIndexedDB(dbStore =>
             new IndexSpec {Name =  "Availability",   KeyPath = "Availability",   Auto = false},
             new IndexSpec {Name =  "Identifier",     KeyPath = "Identifier",     Auto = false},         
             new IndexSpec {Name =  "WorkKeys",       KeyPath = "WorkKeys",       Auto = false},
+            new IndexSpec {Name = "GetBookshelves",  KeyPath = "GetBookshelves", Auto = false},
 
 
         }

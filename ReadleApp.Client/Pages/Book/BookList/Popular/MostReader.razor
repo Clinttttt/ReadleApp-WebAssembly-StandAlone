@@ -23,7 +23,8 @@
                 }
                 else
                 {
-                    System.Console.WriteLine($"Authorr: {book.AuthorNames}");
+
+                    System.Console.WriteLine($"Authorr: {book.AuthorName}");
                     @* <NavLink href="@($"/DisplayBook/{Uri.EscapeDataString(book.WorkKey!)}")">*@
                     <NavLink href="@($"/DisplayBook/{(book.WorkString)}")">
                         <div class="relative flex-shrink-0  rounded-t-lg  w-20 h-32">
@@ -32,6 +33,7 @@
                                  src="@book.CoverUrl"
                                  alt="Book cover image" />
                             <h1>@book.Title</h1>
+                          
                          
                         </div>
                     </NavLink>

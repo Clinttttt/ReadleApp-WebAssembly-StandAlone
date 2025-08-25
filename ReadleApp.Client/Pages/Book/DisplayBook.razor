@@ -42,39 +42,28 @@ else
 
 
 
-@if(books != null)
+@if (books != null)
 {
-    var list = books.Entries!.FirstOrDefault();
-    if (list is not null)
-    {
-        <h1>@list!.Availability</h1>
-        <h1>@list.Identifier</h1>
-        <h1>@list.WorkKeys</h1>
-    }
+
     <h1>@books.Title</h1>
-    <p>@books.AuthorNames</p>
-
-    <h1>@books.Category</h1>
-    <h1>@books.Subjects</h1>
     <img src="@books.CoverUrl" />
-
-    <h1>@books.Description</h1>
-
-
+    <p>@books.SubjectsString</p>
+    <pre>@books.FullText</pre>
+    
 }
 else
 {
+
     <h1>No Book</h1>
 }
 
 
 
-
-@code{
+@code {
 
     [Parameter]
     public string? WorkKey { get; set; }
-    string? Author;
+
     public OpenLibraryModel? books;
     string? bookCover;
     public bool loaded = false;
@@ -87,16 +76,21 @@ else
         {
 
             books = await bookstorage.GetBookById(WorkKey!);
-            Console.WriteLine($"Authors1:{books?.AuthorNames}");
+            Console.WriteLine($"Authors1:{books?.AuthorName}");
+            Console.WriteLine($"Authors1:{books?.Title}");
+          
+
             if (books == null)
             {
                 books = await bookClient.GetBookById(WorkKey!);
-                Console.WriteLine($"Authors2:{books?.AuthorNames}");
+                Console.WriteLine($"Authors2:{books?.AuthorName}");
+                Console.WriteLine($"Title2:{books?.Title}");
+                books = await bookClient.GetBookById(WorkKey!);
+  
             }
 
-        }
 
-       
+        }
         catch (HttpRequestException ex)
         {
             Console.WriteLine($"Book fetch failed: {ex.Message}");
@@ -109,7 +103,7 @@ else
     }
 
 
-      
+
 }
 
 
@@ -154,7 +148,7 @@ else
 {
     @if (Books != null)
     {
-       
+
     }
     else
     {

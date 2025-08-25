@@ -12,20 +12,9 @@ namespace ReadleApp.Domain.Model
 {
     public class HelperModel
     {
-      public class AuthorNames
-        {
-            [JsonPropertyName("name")]
-            public string? Name { get; set; }
-
-            [JsonPropertyName("Key")]
-            public string? Key { get; set; }
-        }
+     
     }
-    public class AuthorResponse
-    {
-        [JsonPropertyName("author")]
-        public AuthorNames? Author { get; set; }
-    }
+ 
     public class Identifiers
     {
         [JsonPropertyName("isbn_13")]
@@ -38,21 +27,32 @@ namespace ReadleApp.Domain.Model
 
     
     }
-    public class LanguageRef
-    {
-        [JsonPropertyName("key")]
-        public string? Key { get; set; } 
-    }
+  
     public class Author
     {
-        
+        [JsonPropertyName("author")]
+        public AuthorREf? author { get; set; }
+    }
+    public class AuthorREf
+    {
+        [JsonPropertyName("Key")]
+        public string? Key { get; set; }
+    }
 
+    public class AuthorNames
+    {
         [JsonPropertyName("name")]
         public string? Name { get; set; }
+
+        [JsonPropertyName("Key")]
+        public string? Key { get; set; }
     }
-    public class AuthorWrapper
+   
+    public class LanguageNames
     {
-        [JsonPropertyName("author")]
-        public Author? Author { get; set; }
+        [JsonPropertyName("key")]
+        public string? Key { get; set; }
     }
-    }
+
+
+}

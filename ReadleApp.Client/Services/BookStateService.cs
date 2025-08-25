@@ -1,6 +1,7 @@
 ﻿using ReadleApp.Domain.Interface;
 using ReadleApp.Domain.Model;
 using System.Net.Http.Json;
+using System.Security.Cryptography.X509Certificates;
 using static ReadleApp.Domain.Model.OpenLibraryModel;
 using static System.Net.WebRequestMethods;
 
@@ -35,7 +36,7 @@ namespace ReadleApp.Client.Services
 
             var categories = new List<string>
                 {
-                    "Adventure", "Romance", "Science", "Mystery",
+                    "Adventure", "Romance", "Science", "Mystery", "MostRead",
                     "Children", "Poetry", "History", "ShortStories", "Classics"
                 };
 
@@ -51,7 +52,7 @@ namespace ReadleApp.Client.Services
 
         private async Task LoadCategoryAsync(string category)
         {
-            var books = await _db.GetTenBookAsync(category);
+            var books = await _db.GetTenBookAsync(category) ?? new List<OpenLibraryModel>();
 
             if (books == null || books.Count == 0)
             {
@@ -78,6 +79,8 @@ namespace ReadleApp.Client.Services
 
                 AllBook[category] = new List<OpenLibraryModel>();
 
+
+
                 foreach (var book in books.Take(10))
                 {
                     book.Category = category;
@@ -91,6 +94,7 @@ namespace ReadleApp.Client.Services
             }
 
             AllBook[category] = books;
+        
         }
 
 

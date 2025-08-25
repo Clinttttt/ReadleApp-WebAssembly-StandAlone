@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static ReadleApp.Domain.Model.OpenLibraryModel;
 
 namespace ReadleApp.Domain.Model
 {
@@ -15,7 +16,7 @@ namespace ReadleApp.Domain.Model
 
 
         [JsonPropertyName("docs")]
-        public List<OpenLibraryModel>? Docs { get; set; }
+        public List<OpenLibraryDoc>? Docs { get; set; }
 
     }
     public class OpenEditionResponse
@@ -23,5 +24,10 @@ namespace ReadleApp.Domain.Model
 
         [JsonPropertyName("entries")]
         public List<Edition>? Entries { get; set; }
+
+    }
+    public class OpenBookShelveResponse
+    {
+
     }
 }

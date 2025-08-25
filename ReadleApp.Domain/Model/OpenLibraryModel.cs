@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using static ReadleApp.Domain.Model.OpenLibraryBookShelves;
 
 namespace ReadleApp.Domain.Model
 {
@@ -22,38 +24,16 @@ namespace ReadleApp.Domain.Model
         public HelperObject? ObjectHelper { get; set; }
 
 
-        //Languages
-        [JsonPropertyName("languages")]
-        public List<LanguageRef>? languages { get; set; }
 
 
 
-        //subjects
-        [JsonPropertyName("subject")]
-        public List<string>? Subjects { get; set; }
-
-        //Text
-        [JsonPropertyName("ebooks")]
-        public List<Ebook>? Ebooks { get; set; }
 
 
-        [JsonPropertyName("size")]
-        public int Size { get; set; }
 
-        //Title
-        [JsonPropertyName("title")]
-        public string? Title { get; set; }
 
-    
 
-            [JsonPropertyName("authors")]
-            public List<Author>? Authors { get; set; }
 
-            [JsonIgnore]
-            public string? AuthorNames => Authors == null || Authors.Count == 0
-                ? null
-                : string.Join(", ", Authors.Select(a => a.Name));
-        
+
 
 
 
@@ -69,39 +49,26 @@ namespace ReadleApp.Domain.Model
         [JsonPropertyName("cover_id")]
         public int? CoverIdAt { get; set; }
 
-        [JsonPropertyName("covers")]
-        public List<int>? Covers { get; set; }
-
-
         //edition count
         [JsonPropertyName("edition_count")]
         public int? EditionCount { get; set; }
 
+        [JsonIgnore]
         public string? Category { get; set; }
 
-      
-        //workkey helper
-        public string WorkString => WorkKey!.Replace("/works/", "") ?? "";
 
-        //cover helper
-        public string? CoverUrl
-        {
-            get
-            {
-                int? coverId = CoverIdAt ?? CoverIdAlt ?? Covers?.FirstOrDefault();
-                return coverId.HasValue ? $"https://covers.openlibrary.org/b/id/{coverId}-L.jpg" : null;
-            }
-        }
+
+
 
         //subject helper
         public string SubjectsString =>
-        Subjects != null ? string.Join(", ", Subjects) : string.Empty;
-
+        Subjects != null  ? string.Join(", ", Subjects.Take(5)) : string.Empty;
 
         [JsonIgnore]
         public string? Isbn13 => BookEdition?.Identifier?.Isbn13 != null && BookEdition.Identifier.Isbn13.Count > 0
            ? BookEdition.Identifier.Isbn13[0]
            : null;
+        [JsonIgnore]
         public Edition? BookEdition { get; set; }
 
 
@@ -122,11 +89,82 @@ namespace ReadleApp.Domain.Model
                 return DescriptionRaw?.ToString();
             }
         }
-    
-            
+        [JsonPropertyName("source_records")]
+        public List<string>? SourceRecord { get; set; }
 
+     
+        //working 
+        [JsonPropertyName("title")]
+        public string? Title { get; set; }
+
+        [JsonPropertyName("covers")]
+        public List<int>? Covers { get; set; }
+        public string WorkString => WorkKey!.Replace("/works/", "") ?? "";
+        public string? CoverUrl
+        {
+            get
+            {
+                int? coverId = CoverIdAt ?? CoverIdAlt ?? Covers?.FirstOrDefault();
+                return coverId.HasValue ? $"https://covers.openlibrary.org/b/id/{coverId}-L.jpg" : null;
+            }
+        }
+        [JsonPropertyName("bookshelves")]
+        public Bookshelve? Bookshelves { get; set; }
+
+        public string? AuthorName { get; set; }
+
+        [JsonPropertyName("authors")]
+        public List<Author>? Authors { get; set; }
+        [JsonPropertyName("subject_people")]
+        public List<string>? SubjectPeople { get; set; }
+        [JsonPropertyName("subject_places")]
+        public List<string>? SubjectPlaces { get; set; }
+        [JsonPropertyName("subject_times")]
+        public List<string>? SubjectTime { get; set; }
+        [JsonPropertyName("latest_revision")]
+        public int LatestRivision { get; set; }
+
+        public List<string>? Languagess { get; set; }
+        [JsonPropertyName("subjects")]
+        public List<string>? Subjects { get; set; }
+        public List<string>? Publisher { get; set; }
+        public List<string>? ISBN { get; set; }
+        public string? PubLishedDate { get; set; }
+        public string? SubTitle { get; set; }
+        public List<string>? Series { get; set; }
+        public List<string>? PublishedPlace { get; set; }
+        public string? OCAID { get; set; }
+
+        [MaxLength]
+        public string? FullText { get; set; }
+
+        //doc
+        public class OpenLibraryDoc
+        {
+            [JsonPropertyName("key")]
+            public string? WorkKey { get; set; }
+            [JsonPropertyName("title")]
+            public string? Title { get; set; }
+
+            [JsonPropertyName("author_key")]
+            public List<string>? AuthorKey { get; set; }
+            [JsonPropertyName("author_name")]
+            public List<string>? AuthorName { get; set; }
+
+            [JsonPropertyName("cover_i")]
+            public int? CoverKey { get; set; }
+
+            [JsonPropertyName("has_fulltext")]
+            public bool HasFullText { get; set; }
+
+            [JsonPropertyName("ebook_access")]
+            public string? EbookAccess { get; set; }
+
+            [JsonPropertyName("ia")]
+            public List<string>? IA { get; set; }
         }
 
+    }
 
 
 
@@ -150,7 +188,4 @@ namespace ReadleApp.Domain.Model
 
 
 
-
-
-    
 }

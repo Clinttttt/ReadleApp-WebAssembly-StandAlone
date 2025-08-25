@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static ReadleApp.Domain.Model.OpenLibraryModel;
 
 namespace ReadleApp.Domain.Model
 {
