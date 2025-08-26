@@ -26,13 +26,13 @@ namespace ReadleApp.Infrastructure.Services
 
 
 
-        public async Task<OpenLibraryModel?> GetBookAsync(string workkey)
+        public async Task<OpenLibraryResponse?> GetBookAsync(string workkey)
         {
             var responsework = await _http.GetFromJsonAsync<OpenLibraryModel>($"https://openlibrary.org/works/{workkey}.json");
             var editionsResponse = await _http.GetFromJsonAsync<OpenEditionResponse>($"https://openlibrary.org/works/{workkey}/editions.json");
             var bookshelvesResponse = await _http.GetFromJsonAsync<OpenLibraryBookShelves>($"https://openlibrary.org/works/{workkey}/bookshelves.json");
             var responsedoc = await _http.GetFromJsonAsync<OpenLibraryResponse>($"https://openlibrary.org/search.json?q={workkey}");
-
+            //var firstDoc = responsedoc.Docs.FirstOrDefault( s => s.WorkKey == workkey);
 
             var FirstDoc = responsedoc!.Docs!.FirstOrDefault(s => s.IA != null && s.IA.Any());
             var GetAi = FirstDoc!.IA!.FirstOrDefault();
@@ -41,8 +41,12 @@ namespace ReadleApp.Infrastructure.Services
 
 
                 var FetchIa = await _http.GetStringAsync($"https://archive.org/stream/{GetAi}/{GetAi}_djvu.txt");
-                responsework!.FullText = FetchIa;
-                Console.Write($"FullText{responsework!.FullText}");
+                foreach (var response in responsedoc.Docs!)
+                {
+                    response.FullText = FetchIa;
+                }
+              
+                Console.Write($"FullText{responsedoc.Docs.Select( s => s.FullText)}");
 
             }
             catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -50,38 +54,29 @@ namespace ReadleApp.Infrastructure.Services
                 responsework!.FullText = "Full text not available.";
             }
 
-
-
             if (editionsResponse is not null)
             {
                 foreach (var editionkey in editionsResponse!.Entries!)
                 {
                     editionkey.WorkKeys = responsework!.WorkKey;
-
-
-
                 }
-                if (bookshelvesResponse is not null)
+                if (editionsResponse is not null || bookshelvesResponse is not null)
                 {
-                    bookshelvesResponse.WorkKey = responsework!.WorkKey;
-                    responsework.Bookshelves = bookshelvesResponse.GetBookshelves;
+                    foreach (var ResponseDoc in responsedoc.Docs!)
+                    {
+                        bookshelvesResponse!.WorkKey = responsework!.WorkKey;
+                        ResponseDoc.BookshelveClone = bookshelvesResponse.GetBookshelves;
+                        ResponseDoc.PublishedDateClone = editionsResponse!.Entries.Select(s => s.PublishedDate).FirstOrDefault(s => !string.IsNullOrEmpty(s));
+                        ResponseDoc.PublishersClone = editionsResponse.Entries.Where(s => s.Publisher != null).SelectMany(s => s.Publisher!).ToList();
+                        ResponseDoc.SubjectsClone = responsework.Subject;
+                        ResponseDoc.DescriptionClones = responsework.DescriptionRaw;
+                    }
+                  
                 }
-                foreach (var a in responsework!.Authors!)
-                {
-                    var author = await _http.GetFromJsonAsync<AuthorNames>($"https://openlibrary.org{a.author!.Key}.json");
-
-                    Console.WriteLine($"name{author!.Name}");
-                    responsework.AuthorName = author.Name;
-                }
-                responsework.Publisher = editionsResponse.Entries.Where(s => s.Publisher != null).SelectMany(s => s.Publisher!).ToList();
-                responsework.ISBN = editionsResponse.Entries.Where(s => s.ISBN != null).SelectMany(s => s.ISBN!).Take(1).ToList();
-                responsework.PubLishedDate = editionsResponse.Entries.Select(s => s.PublishedDate).FirstOrDefault( s => !string.IsNullOrEmpty(s));
-                responsework.SubTitle = editionsResponse.Entries.Select(s => s.SubTitle).FirstOrDefault(s => !string.IsNullOrEmpty(s));
-                responsework.Series = editionsResponse.Entries.Where(s => s.Series != null).SelectMany(s => s.Series!).ToList();
-                responsework.PublishedPlace = editionsResponse.Entries.Where(s => s.PublishedPlace != null).SelectMany(s => s.PublishedPlace!).ToList();
-                responsework.OCAID = editionsResponse.Entries.Select(s => s.OCAID).FirstOrDefault(s => !string.IsNullOrEmpty(s));
+       
+             
             }
-            return responsework;
+            return responsedoc;
         }
 
 
@@ -96,10 +91,10 @@ namespace ReadleApp.Infrastructure.Services
 
        
 
-        public async Task<List<OpenLibraryModel>> AdventureAsync()
+        public async Task<List<OpenLibraryDoc>> AdventureAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/subjects/adventure.json");
-            return response!.Works!.Take(10).ToList() ?? new List<OpenLibraryModel>();
+            return response!.Docs!.Take(10).ToList() ?? new List<OpenLibraryDoc>();
         }
         public async Task<List<OpenLibraryModel>> RomanceAsync()
         {
@@ -107,47 +102,47 @@ namespace ReadleApp.Infrastructure.Services
             return response!.Works!.Take(10).ToList() ?? new List<OpenLibraryModel>();
         }
 
-        public async Task<List<OpenLibraryModel>> ScienceAsync()
+        public async Task<List<OpenLibraryDoc>> ScienceAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/subjects/science.json");
-            return response!.Works!.Take(10).ToList() ?? new List<OpenLibraryModel>();
+            return response!.Docs!.Take(10).ToList() ?? new List<OpenLibraryDoc>();
         }
 
 
-        public async Task<List<OpenLibraryModel>> MysteryAsync()
+        public async Task<List<OpenLibraryDoc>> MysteryAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/subjects/mystery.json");
-            return response!.Works!.Take(10).ToList() ?? new List<OpenLibraryModel>();
+            return response!.Docs!.Take(10).ToList() ?? new List<OpenLibraryDoc>();
         }
-        public async Task<List<OpenLibraryModel>> ChildrenAsync()
+        public async Task<List<OpenLibraryDoc>> ChildrenAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/subjects/children.json");
-            return response!.Works!.Take(10).ToList() ?? new List<OpenLibraryModel>();
+            return response!.Docs!.Take(10).ToList() ?? new List<OpenLibraryDoc>();
         }
 
 
-        public async Task<List<OpenLibraryModel>> PoetryAsync()
+        public async Task<List<OpenLibraryDoc>> PoetryAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/subjects/poetry.json");
-            return response!.Works!.Take(10).ToList() ?? new List<OpenLibraryModel>();
+            return response!.Docs!.Take(10).ToList() ?? new List<OpenLibraryDoc>();
         }
-        public async Task<List<OpenLibraryModel>> HistoryAsync()
+        public async Task<List<OpenLibraryDoc>> HistoryAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/subjects/history.json");
-            return response!.Works!.Take(10).ToList() ?? new List<OpenLibraryModel>();
+            return response!.Docs!.Take(10).ToList() ?? new List<OpenLibraryDoc>();
         }
 
-        public async Task<List<OpenLibraryModel>> ShortStoriesAsync()
+        public async Task<List<OpenLibraryDoc>> ShortStoriesAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/subjects/short_stories.json");
-            return response!.Works!.Take(10).ToList() ?? new List<OpenLibraryModel>();
+            return response!.Docs!.Take(10).ToList() ?? new List<OpenLibraryDoc>();
         }
 
 
-        public async Task<List<OpenLibraryModel>> ClassicsAsync()
+        public async Task<List<OpenLibraryDoc>> ClassicsAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/subjects/classic_literature.json");
-            return response!.Works!.Take(10).ToList() ?? new List<OpenLibraryModel>();
+            return response!.Docs!.Take(10).ToList() ?? new List<OpenLibraryDoc>();
         }
 
 
@@ -157,63 +152,21 @@ namespace ReadleApp.Infrastructure.Services
 
 
 
-        /*     
-             public async Task<List<BookGutendex>> AdventureAsync()
-                 => await FetchBooksAsync("https://gutendex.com/books?topic=adventure&page_size=10");
+        /*   foreach (var a in responsework!.Authors!)
+                 {
+                     var author = await _http.GetFromJsonAsync<AuthorNames>($"https://openlibrary.org{a.author!.Key}.json");
 
-             public async Task<List<BookGutendex>> RomanceAsync()
+                     Console.WriteLine($"name{author!.Name}");
+                     responsework.AuthorName = author.Name;
+                 }*/
 
-                  => await FetchBooksAsync("https://gutendex.com/books?topic=romance&page_size=10");
-
-
-             public async Task<List<BookGutendex>> ScienceAsync()
-
-                 => await FetchBooksAsync ("https://gutendex.com/books?topic=science&page_size=10");
-
-
-             public async Task<List<BookGutendex>> MysteryAsync()
-
-                   => await FetchBooksAsync("https://gutendex.com/books?topic=mystery&page_size=10");
-
-
-             public async Task<List<BookGutendex>> ChildrenAsync()
-
-                 => await FetchBooksAsync("https://gutendex.com/books?topic=Children's&page_size=10");
-
-
-             public async Task<List<BookGutendex>> PoetryAsync()
-
-               => await FetchBooksAsync("https://gutendex.com/books?topic=Poetry&page_size=10");
-
-
-             public async Task<List<BookGutendex>> HistoryAsync()
-
-              => await FetchBooksAsync("https://gutendex.com/books?topic=History&page_size=10");
-
-             public async Task<List<BookGutendex>> ShortStoriesAsync()
-
-                  => await FetchBooksAsync("https://gutendex.com/books?topic=Short%20Stories&page_size=10");
-
-
-             public async Task<List<BookGutendex>> ClassicsAsync()
-
-                 => await FetchBooksAsync("https://gutendex.com/books?topic=Classics&page_size=10");
-
-             public async Task<List<BookGutendex>> GetBookByTopicAsnyc(string topic)
-             {
-                 var encodedTopic = Uri.EscapeDataString(topic);
-                 var response = await _http.GetFromJsonAsync<GutendexResponse>($"https://gutendex.com/books?topic={encodedTopic}&page_size=10");
-                 return response?.Results ?? new List<BookGutendex>();
-             }*/
-
-
-
-
-
-
-        /*    public async Task<OpenLibraryModel?> GetBookEdition(string workkey)
-        {
-            return await _http.GetFromJsonAsync<OpenLibraryModel>($"https://openlibrary.org/works/{workkey}/editions.json");
-        }*/
+        /*      responsework.Publisher = editionsResponse.Entries.Where(s => s.Publisher != null).SelectMany(s => s.Publisher!).ToList();
+              responsework.ISBN = editionsResponse.Entries.Where(s => s.ISBN != null).SelectMany(s => s.ISBN!).Take(1).ToList();
+              responsework.PubLishedDate = editionsResponse.Entries.Select(s => s.PublishedDate).FirstOrDefault( s => !string.IsNullOrEmpty(s));
+              responsework.SubTitle = editionsResponse.Entries.Select(s => s.SubTitle).FirstOrDefault(s => !string.IsNullOrEmpty(s));
+              responsework.Series = editionsResponse.Entries.Where(s => s.Series != null).SelectMany(s => s.Series!).ToList();
+              responsework.PublishedPlace = editionsResponse.Entries.Where(s => s.PublishedPlace != null).SelectMany(s => s.PublishedPlace!).ToList();
+              responsework.OCAID = editionsResponse.Entries.Select(s => s.OCAID).FirstOrDefault(s => !string.IsNullOrEmpty(s));
+         */
     }
 }

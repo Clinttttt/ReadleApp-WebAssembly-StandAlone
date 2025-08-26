@@ -64,7 +64,7 @@ else
     [Parameter]
     public string? WorkKey { get; set; }
 
-    public OpenLibraryModel? books;
+    public OpenLibraryDoc? books;
     string? bookCover;
     public bool loaded = false;
     public string? Isbn { get; set; }
@@ -76,18 +76,18 @@ else
         {
 
             books = await bookstorage.GetBookById(WorkKey!);
-            Console.WriteLine($"Authors1:{books?.AuthorName}");
-            Console.WriteLine($"Authors1:{books?.Title}");
+            /* Console.WriteLine($"Authors1:{books?.AuthorName}");
+            Console.WriteLine($"Authors1:{books?.Title}");*/
           
 
-            if (books == null)
+                 if (books == null)
             {
                 books = await bookClient.GetBookById(WorkKey!);
                 Console.WriteLine($"Authors2:{books?.AuthorName}");
                 Console.WriteLine($"Title2:{books?.Title}");
                 books = await bookClient.GetBookById(WorkKey!);
-  
-            }
+
+                }
 
 
         }

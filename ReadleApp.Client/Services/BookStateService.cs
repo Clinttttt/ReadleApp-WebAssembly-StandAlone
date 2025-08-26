@@ -10,7 +10,7 @@ namespace ReadleApp.Client.Services
     public class BookStateService
     {
         public event Action? OnChange;
-        public Dictionary<string, List<OpenLibraryModel>> AllBook { get; set; } = new();
+        public Dictionary<string, List<OpenLibraryDoc>> AllBook { get; set; } = new();
         public bool IsInitialized { get; set; } = false;
         private readonly IBookRespository _db;
         private readonly BookClientServices _bookClient;
@@ -52,7 +52,7 @@ namespace ReadleApp.Client.Services
 
         private async Task LoadCategoryAsync(string category)
         {
-            var books = await _db.GetTenBookAsync(category) ?? new List<OpenLibraryModel>();
+            var books = await _db.GetTenBookAsync(category) ?? new List<OpenLibraryDoc>();
 
             if (books == null || books.Count == 0)
             {
@@ -68,7 +68,7 @@ namespace ReadleApp.Client.Services
                     "History" => await _bookClient.HistoryAsync(),
                     "ShortStories" => await _bookClient.ShortStoriesAsync(),
                     "Classics" => await _bookClient.ClassicsAsync(),
-                    _ => new List<OpenLibraryModel>()
+                    _ => new List<OpenLibraryDoc>()
                 };
 
 
@@ -77,7 +77,7 @@ namespace ReadleApp.Client.Services
                              .Take(10)
                              .ToList();
 
-                AllBook[category] = new List<OpenLibraryModel>();
+                AllBook[category] = new List<OpenLibraryDoc>();
 
 
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Net.Http.Json;
+using System.Security;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static ReadleApp.Domain.Model.OpenLibraryBookShelves;
@@ -18,25 +19,111 @@ namespace ReadleApp.Domain.Model
         [JsonPropertyName("key")]
         public string? WorkKey { get; set; }
 
+        [MaxLength]
+        public string? FullText { get; set; }
+
+        
+
+        [JsonPropertyName("subjects")]
+        public List<string>? Subject { get; set;}
+
+        [JsonPropertyName("description")]
+        public object? DescriptionRaw { get; set; }
+        //doc
+        public class OpenLibraryDoc
+        {
+            public int Id { get; set; }
+
+            [JsonPropertyName("key")]
+            public string? WorkKey { get; set; }
+            [JsonPropertyName("title")]
+            public string? Title { get; set; }
+
+            [JsonPropertyName("author_key")]
+            public List<string>? AuthorKey { get; set; }
+            [JsonPropertyName("author_name")]
+            public List<string>? AuthorName { get; set; }
+
+            [JsonPropertyName("cover_i")]
+            public int? CoverKey { get; set; }
+
+            [JsonPropertyName("has_fulltext")]
+            public bool HasFullText { get; set; }
+
+            [JsonPropertyName("ebook_access")]
+            public string? EbookAccess { get; set; }
+
+            [JsonPropertyName("ia")]
+            public List<string>? IA { get; set; }
+
+            [JsonPropertyName("subtitle")]
+            public string? SubTitle { get; set; }
+
+            [JsonPropertyName("language")]
+           public List<string>? Languages { get; set; }
+
+            [JsonIgnore]
+            public string? Category { get; set; }
+            public string? PublishedDateClone { get; set; }      
+            public List<string>? PublishersClone { get; set; }
+            public List<string>? SubjectsClone { get; set; }
+            public Bookshelve? BookshelveClone { get; set; }
+            public string SubjectsString => SubjectsClone != null ? string.Join(",", SubjectsClone.Take(5)) : string.Empty;
+            [JsonIgnore]
+            public object? DescriptionClones { get; set; }
+
+            public string? DescriptionHelper
+            {
+                get
+                {
+                    if(DescriptionClones is not null && DescriptionClones is JsonElement element)
+                    {
+                        if (element.ValueKind == JsonValueKind.String) return element.GetString();
+                        if (element.ValueKind == JsonValueKind.Object && element.TryGetProperty("value", out var val))
+                            return val.GetString();
+
+                        
+                    }
+
+                    return DescriptionClones?.ToString() ?? string.Empty;
+                }
+            }
+
+            public string? CoverUrl
+            {
+                get
+                {
+                    int? coverId = CoverKey;
+                    return coverId.HasValue ? $"https://covers.openlibrary.org/b/id/{coverId}-L.jpg" : null;
+                }
+            }
+            public string WorkString => WorkKey!.Replace("/works/", "") ?? "";
+           
+            [JsonIgnore]
+            public string? FullText { get; set; }
+        
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
         [JsonPropertyName("entries")]
         public List<Edition>? Entries { get; set; }
 
         public HelperObject? ObjectHelper { get; set; }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         //covers
@@ -133,41 +220,7 @@ namespace ReadleApp.Domain.Model
         public string? SubTitle { get; set; }
         public List<string>? Series { get; set; }
         public List<string>? PublishedPlace { get; set; }
-        public string? OCAID { get; set; }
-
-        [MaxLength]
-        public string? FullText { get; set; }
-
-        //doc
-        public class OpenLibraryDoc
-        {
-            [JsonPropertyName("key")]
-            public string? WorkKey { get; set; }
-            [JsonPropertyName("title")]
-            public string? Title { get; set; }
-
-            [JsonPropertyName("author_key")]
-            public List<string>? AuthorKey { get; set; }
-            [JsonPropertyName("author_name")]
-            public List<string>? AuthorName { get; set; }
-
-            [JsonPropertyName("cover_i")]
-            public int? CoverKey { get; set; }
-
-            [JsonPropertyName("has_fulltext")]
-            public bool HasFullText { get; set; }
-
-            [JsonPropertyName("ebook_access")]
-            public string? EbookAccess { get; set; }
-
-            [JsonPropertyName("ia")]
-            public List<string>? IA { get; set; }
-        }
-
-    }
-
-
-
+        public string? OCAID { get; set; }*/
 
 
 

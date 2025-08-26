@@ -1,6 +1,7 @@
 ﻿using ReadleApp.Domain.Model;
 using System.Net.Http.Json;
 using System.Runtime.InteropServices;
+using static ReadleApp.Domain.Model.OpenLibraryModel;
 
 namespace ReadleApp.Client.Services
 {
@@ -11,63 +12,63 @@ namespace ReadleApp.Client.Services
         {
             _http = http;
         }
-        public async Task<List<OpenLibraryModel>> MostReadAsync()
+        public async Task<List<OpenLibraryDoc>> MostReadAsync()
         {
-            return await _http.GetFromJsonAsync<List<OpenLibraryModel>>("api/Books/MostRead")
-                   ?? new List<OpenLibraryModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryDoc>>("api/Books/MostRead")
+                   ?? new List<OpenLibraryDoc>();
         }
-        public async Task<List<OpenLibraryModel>> AdventureAsync()
+        public async Task<List<OpenLibraryDoc>> AdventureAsync()
         {
-            return await _http.GetFromJsonAsync<List<OpenLibraryModel>>("api/Books/Adventure")
-                ?? new List<OpenLibraryModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryDoc>>("api/Books/Adventure")
+                ?? new List<OpenLibraryDoc>();
         }
-        public async Task<List<OpenLibraryModel>> RomanceAsync()
+        public async Task<List<OpenLibraryDoc>> RomanceAsync()
         {
-            return await _http.GetFromJsonAsync<List<OpenLibraryModel>>("api/Books/Romance")
-                ?? new List<OpenLibraryModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryDoc>>("api/Books/Romance")
+                ?? new List<OpenLibraryDoc>();
         }
-        public async Task<List<OpenLibraryModel>> ScienceAsync()
+        public async Task<List<OpenLibraryDoc>> ScienceAsync()
         {
-            return await _http.GetFromJsonAsync<List<OpenLibraryModel>>("api/Books/Science")
-                ?? new List<OpenLibraryModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryDoc>>("api/Books/Science")
+                ?? new List<OpenLibraryDoc>();
         }
-        public async Task<List<OpenLibraryModel>> MysteryAsync()
+        public async Task<List<OpenLibraryDoc>> MysteryAsync()
         {
-            return await _http.GetFromJsonAsync<List<OpenLibraryModel>>("api/Books/Mystery")
-                ?? new List<OpenLibraryModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryDoc>>("api/Books/Mystery")
+                ?? new List<OpenLibraryDoc>();
         }
-        public async Task<List<OpenLibraryModel>> ChildrenAsync()
+        public async Task<List<OpenLibraryDoc>> ChildrenAsync()
         {
-            return await _http.GetFromJsonAsync<List<OpenLibraryModel>>("api/Books/Children")
-                ?? new List<OpenLibraryModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryDoc>>("api/Books/Children")
+                ?? new List<OpenLibraryDoc>();
         }
-        public async Task<List<OpenLibraryModel>> PoetryAsync()
+        public async Task<List<OpenLibraryDoc>> PoetryAsync()
         {
-            return await _http.GetFromJsonAsync<List<OpenLibraryModel>>("api/Books/Poetry")
-                ?? new List<OpenLibraryModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryDoc>>("api/Books/Poetry")
+                ?? new List<OpenLibraryDoc>();
         }
-        public async Task<List<OpenLibraryModel>> HistoryAsync()
+        public async Task<List<OpenLibraryDoc>> HistoryAsync()
         {
-            return await _http.GetFromJsonAsync<List<OpenLibraryModel>>("api/Books/History")
-            ?? new List<OpenLibraryModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryDoc>>("api/Books/History")
+            ?? new List<OpenLibraryDoc>();
         }
-        public async Task<List<OpenLibraryModel>> ShortStoriesAsync()
+        public async Task<List<OpenLibraryDoc>> ShortStoriesAsync()
         {
-            return await _http.GetFromJsonAsync<List<OpenLibraryModel>>("api/Books/ShortStories")
-                ?? new List<OpenLibraryModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryDoc>>("api/Books/ShortStories")
+                ?? new List<OpenLibraryDoc>();
         }
-        public async Task<List<OpenLibraryModel>> ClassicsAsync()
+        public async Task<List<OpenLibraryDoc>> ClassicsAsync()
         {
-            return await _http.GetFromJsonAsync<List<OpenLibraryModel>>("api/Books/Classics")
-                ?? new List<OpenLibraryModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryDoc>>("api/Books/Classics")
+                ?? new List<OpenLibraryDoc>();
         }
         public async Task<string> BookCover(string title, string author)
         {
             return await _http.GetStringAsync($"api/Books/BookCover?title={Uri.EscapeDataString(title)}&author={Uri.EscapeDataString(author)}");
         }
-        public async Task<OpenLibraryModel?> GetBookById(string workkey)
+        public async Task<OpenLibraryDoc?> GetBookById(string workkey)
         {
-            return await _http.GetFromJsonAsync<OpenLibraryModel>($"api/Books/GetBookById/{workkey}");
+            return await _http.GetFromJsonAsync<OpenLibraryDoc>($"api/Books/GetBookById/{workkey}");
 
         }
        
