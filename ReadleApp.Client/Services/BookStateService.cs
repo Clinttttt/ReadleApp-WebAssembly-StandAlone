@@ -1,4 +1,5 @@
-﻿using ReadleApp.Domain.Interface;
+﻿using ReadleApp.Domain;
+using ReadleApp.Domain.Interface;
 using ReadleApp.Domain.Model;
 using System.Net.Http.Json;
 using System.Security.Cryptography.X509Certificates;
@@ -10,7 +11,7 @@ namespace ReadleApp.Client.Services
     public class BookStateService
     {
         public event Action? OnChange;
-        public Dictionary<string, List<OpenLibraryDoc>> AllBook { get; set; } = new();
+        public Dictionary<string, List<OfflineReadingModel>> AllBook { get; set; } = new();
         public bool IsInitialized { get; set; } = false;
         private readonly IBookRespository _db;
         private readonly BookClientServices _bookClient;
@@ -28,15 +29,12 @@ namespace ReadleApp.Client.Services
             if (IsInitialized) return;
 
 
-            await LoadCategoryAsync("MostRead");
-            NotifyStateChanged();
-
-
-
+            //await LoadCategoryAsync("MostRead");
+            //NotifyStateChanged();
 
             var categories = new List<string>
                 {
-                    "Adventure", "Romance", "Science", "Mystery", "MostRead",
+                   "MostRead", "Adventure", "Romance", "Science", "Mystery", 
                     "Children", "Poetry", "History", "ShortStories", "Classics"
                 };
 
@@ -52,7 +50,7 @@ namespace ReadleApp.Client.Services
 
         private async Task LoadCategoryAsync(string category)
         {
-            var books = await _db.GetTenBookAsync(category) ?? new List<OpenLibraryDoc>();
+            var books = await _db.GetTenBookAsync(category) ?? new List<OfflineReadingModel>();
 
             if (books == null || books.Count == 0)
             {
@@ -68,26 +66,26 @@ namespace ReadleApp.Client.Services
                     "History" => await _bookClient.HistoryAsync(),
                     "ShortStories" => await _bookClient.ShortStoriesAsync(),
                     "Classics" => await _bookClient.ClassicsAsync(),
-                    _ => new List<OpenLibraryDoc>()
+                    _ => new List<OfflineReadingModel>()
                 };
 
 
-                books = books.GroupBy(s => s.WorkKey)
+                books = books.GroupBy(s => s._Workkey)
                              .Select(s => s.First())
-                             .Take(10)
+                             .Take(20)
                              .ToList();
 
-                AllBook[category] = new List<OpenLibraryDoc>();
+                AllBook[category] = new List<OfflineReadingModel>();
 
 
 
-                foreach (var book in books.Take(10))
+                foreach (var book in books.Take(20))
                 {
                     book.Category = category;
 
                     await _db.SaveBookAsync(book);
 
-                    AllBook[category].Add(book);
+                    //AllBook[category].Add(book);
 
                     NotifyStateChanged();
                 }

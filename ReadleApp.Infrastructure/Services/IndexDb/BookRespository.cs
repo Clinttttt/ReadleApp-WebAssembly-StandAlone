@@ -21,10 +21,10 @@ namespace ReadleApp.Infrastructure.Services.IndexDb
             _db = db;
         }
        
-        public async Task SaveBookAsync(OpenLibraryDoc book)
+        public async Task SaveBookAsync(OfflineReadingModel book)
         {
 
-            var record = new StoreRecord<OpenLibraryDoc>
+            var record = new StoreRecord<OfflineReadingModel>
             {
                 Storename = "Books",
                 Data = book
@@ -33,18 +33,18 @@ namespace ReadleApp.Infrastructure.Services.IndexDb
             await _db.AddRecord(record);
         }
 
-        public async Task SaveTenBookAsync(List<OpenLibraryDoc> books)
+        public async Task SaveTenBookAsync(List<OfflineReadingModel> books)
         {
-            foreach (var book in books.Take(10))
+            foreach (var book in books.Take(20))
             {   
                 await SaveBookAsync(book);
             }
         }
-        public async Task<List<OpenLibraryDoc>> GetTenBookAsync(string? category)
+        public async Task<List<OfflineReadingModel>> GetTenBookAsync(string? category)
         {
-            var Results = await _db.GetRecords<OpenLibraryDoc>("Books") ?? new List<OpenLibraryDoc>();
+            var Results = await _db.GetRecords<OfflineReadingModel>("Books") ?? new List<OfflineReadingModel>();
 
-            return Results.Where(b => !string.IsNullOrEmpty(b.Category) && b.Category!.Equals(category, StringComparison.OrdinalIgnoreCase)).Take(10).ToList();
+            return Results.Where(b => !string.IsNullOrEmpty(b.Category) && b.Category!.Equals(category, StringComparison.OrdinalIgnoreCase)).Take(20).ToList();
 
 
         }

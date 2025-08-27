@@ -6,7 +6,7 @@ using ReadleApp.Domain.Interface;
 using ReadleApp.Infrastructure.Services;
 using ReadleApp.Infrastructure.Services.IndexDb;
 using TG.Blazor.IndexedDB;
-
+using ReadleApp.Infrastructure;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
@@ -16,11 +16,11 @@ builder.Services.AddScoped<BookClientServices>();
 builder.Services.AddScoped<IBookRespository, BookRespository>();
 builder.Services.AddScoped<BookApiServices>();
 builder.Services.AddScoped<PageState>();
-
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddIndexedDB(dbStore =>
 {
     dbStore.DbName = "ReadleDb";
-    dbStore.Version = 16;
+    dbStore.Version = 20;
 
     dbStore.Stores.Add(new StoreSchema
     {
@@ -33,36 +33,11 @@ builder.Services.AddIndexedDB(dbStore =>
         },
         Indexes = new List<IndexSpec>
         {
-            new IndexSpec { Name = "WorkKey",            KeyPath = "WorkKey",            Auto = false },
-            new IndexSpec { Name = "Title",              KeyPath = "Title",              Auto = false },
-            new IndexSpec { Name = "AuthorKey",          KeyPath = "AuthorKey",          Auto = false,},
-            new IndexSpec { Name = "AuthorName",         KeyPath = "AuthorName",         Auto = false,},
-            new IndexSpec { Name = "CoverKey",           KeyPath = "CoverKey",           Auto = false },
-            new IndexSpec { Name = "HasFullText",        KeyPath = "HasFullText",        Auto = false },
-            new IndexSpec { Name = "EbookAccess",        KeyPath = "EbookAccess",        Auto = false },
-            new IndexSpec { Name = "IA",                 KeyPath = "IA",                 Auto = false,},
-            new IndexSpec { Name = "SubTitle",           KeyPath = "SubTitle",           Auto = false },
-            new IndexSpec { Name = "Languages",          KeyPath = "Languages",          Auto = false,},
-            new IndexSpec { Name = "Category",           KeyPath = "Category",           Auto = false },
-            new IndexSpec { Name = "PublishedDateClone", KeyPath = "PublishedDateClone", Auto = false },
-            new IndexSpec { Name = "PublishersClone",    KeyPath = "PublishersClone",    Auto = false },
-            new IndexSpec { Name = "SubjectsClone",      KeyPath = "SubjectsClone",      Auto = false },
-            new IndexSpec { Name = "BookshelveClone",    KeyPath = "BookshelveClone",    Auto = false }, 
-            new IndexSpec { Name = "DescriptionClones",  KeyPath = "DescriptionClones",  Auto = false }, 
-            new IndexSpec { Name = "FullText",           KeyPath = "FullText",           Auto = false }
-
-
-
-
-
-
-
-
-
-
-
-
-
+            new IndexSpec{Name = "_Workkey",        KeyPath = "_Workkey",     Unique = true},
+            new IndexSpec{Name = "_Title",          KeyPath = "_Title",       Unique = false},
+            new IndexSpec{Name = "_AuthorName",     KeyPath = "_AuthorName",  Unique = false},
+            new IndexSpec{Name = "_Description",    KeyPath = "_Description", Unique = false},
+            new IndexSpec{Name = "_IA",             KeyPath = "_IA",          Unique = false}
 
 
         }

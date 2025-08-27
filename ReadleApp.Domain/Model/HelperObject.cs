@@ -10,9 +10,9 @@ namespace ReadleApp.Domain.Model
 {
     public class HelperObject
     {
-        public OpenLibraryModel? Book { get; set; }
-        public Edition? BookEdition { get; set; }
+       
       
+
 
 
     }

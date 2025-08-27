@@ -16,7 +16,7 @@
         {
             @foreach (var book in bookState.AllBook["Classics"])
             {
-                if (string.IsNullOrEmpty(book.CoverUrl))
+                if (string.IsNullOrEmpty(book._CoverBase64))
                 {
                     <h1>No Book Cover</h1>
                 }
@@ -26,9 +26,9 @@
                         <div class="relative flex-shrink-0  rounded-t-lg  w-20 h-32">
 
                             <img class=" top-0 left-0 w-full h-full object-cover"
-                                 src="@book.CoverUrl"
+                                 src="@($"data:image/jpeg;base64,{book._CoverBase64}")"
                                  alt="Book cover image" />
-                            <h1>@book.Title</h1>
+                            <h1>@book._Title</h1>
                         </div>
                     </NavLink>
                 }

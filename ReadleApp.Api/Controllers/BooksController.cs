@@ -23,7 +23,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+            return Ok(response.Take(20).ToList());
         }
         [HttpGet("Adventure")]
         public async Task<IActionResult> Adventure()
@@ -33,7 +33,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+            return Ok(response.Take(20).ToList());
         }
 
         [HttpGet("Romance")]
@@ -44,7 +44,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+            return Ok(response.Take(20).ToList());
         }
         [HttpGet("Science")]
         public async Task<IActionResult> ScienceAsync()
@@ -54,7 +54,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+            return Ok(response.Take(20).ToList());
         }
         [HttpGet("Mystery")]
         public async Task<IActionResult> MysteryAsync()
@@ -64,7 +64,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+            return Ok(response.Take(20).ToList());
         }
         [HttpGet("Children")]
         public async Task<IActionResult> ChildrenAsync()
@@ -74,7 +74,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+            return Ok(response.Take(20).ToList());
         }
         [HttpGet("Poetry")]
         public async Task<IActionResult> PoetryAsync()
@@ -84,7 +84,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+            return Ok(response.Take(20).ToList());
         }
         [HttpGet("History")]
         public async Task<IActionResult> HistoryAsync()
@@ -94,7 +94,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+            return Ok(response.Take(20).ToList());
         }
         [HttpGet("ShortStories")]
         public async Task<IActionResult> ShortStoriesAsync()
@@ -104,7 +104,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+            return Ok(response.Take(20).ToList());
         }
         [HttpGet("Classics")]
         public async Task<IActionResult> ClassicsAsync()
@@ -114,7 +114,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+            return Ok(response.Take(20).ToList());
         }
         [HttpGet("GetBookById/{Id}")]
         public async Task<ActionResult> GetBookAsync(string Id)

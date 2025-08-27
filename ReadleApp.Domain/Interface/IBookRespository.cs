@@ -11,13 +11,14 @@ namespace ReadleApp.Domain.Interface
 {
     public interface IBookRespository
     {
-        Task SaveBookAsync(OpenLibraryDoc book);
+        Task SaveBookAsync(OfflineReadingModel book);
         Task<List<OpenLibraryDoc>> GetAllBooks();
         Task<List<OpenLibraryDoc>> GetMostReadAsync(string Category);
-        Task<OpenLibraryDoc?> GetBookById(string Bookid);
+        Task<OpenLibraryDoc> GetBookById(string Bookid);
         //Task<bool> HasBookEachTopicAsync(string topic);
-        Task SaveTenBookAsync(List<OpenLibraryDoc> book);
-        Task<List<OpenLibraryDoc>> GetTenBookAsync(string? category = null);
+        Task SaveTenBookAsync(List<OfflineReadingModel> book);
+        Task<List<OfflineReadingModel>> GetTenBookAsync(string? category = null);
         Task<bool> HasAnyBooksAsync();
+       
     }
 }

@@ -1,5 +1,6 @@
 ﻿@page "/DisplayBook/{WorkKey}"
 @using ReadleApp.Client.Services
+@using ReadleApp.Domain
 @using ReadleApp.Domain.Interface
 @using ReadleApp.Domain.Model
 @using ReadleApp.Infrastructure.Services
@@ -46,9 +47,9 @@ else
 {
 
     <h1>@books.Title</h1>
-    <img src="@books.CoverUrl" />
-    <p>@books.SubjectsString</p>
-    <pre>@books.FullText</pre>
+ 
+ 
+    
     
 }
 else

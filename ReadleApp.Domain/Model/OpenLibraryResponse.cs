@@ -30,4 +30,5 @@ namespace ReadleApp.Domain.Model
     {
 
     }
+   
 }
