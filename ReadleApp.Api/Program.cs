@@ -1,4 +1,5 @@
 using ReadleApp.Domain.Interface;
+using ReadleApp.Infrastructure;
 using ReadleApp.Infrastructure.Services;
 using Scalar.AspNetCore;
 
@@ -10,6 +11,8 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddHttpClient();
+
+builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddScoped<BookApiServices>();
 builder.Services.AddCors(options =>

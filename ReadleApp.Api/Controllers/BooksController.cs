@@ -23,7 +23,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(20).ToList());
+            return Ok(response.Take(10).ToList());
         }
         [HttpGet("Adventure")]
         public async Task<IActionResult> Adventure()
@@ -33,7 +33,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(20).ToList());
+            return Ok(response.Take(10).ToList());
         }
 
         [HttpGet("Romance")]
@@ -44,7 +44,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(20).ToList());
+            return Ok(response.Take(10).ToList());
         }
         [HttpGet("Science")]
         public async Task<IActionResult> ScienceAsync()
@@ -54,7 +54,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(20).ToList());
+            return Ok(response.Take(10).ToList());
         }
         [HttpGet("Mystery")]
         public async Task<IActionResult> MysteryAsync()
@@ -64,7 +64,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(20).ToList());
+            return Ok(response.Take(10).ToList());
         }
         [HttpGet("Children")]
         public async Task<IActionResult> ChildrenAsync()
@@ -74,7 +74,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(20).ToList());
+            return Ok(response.Take(10).ToList());
         }
         [HttpGet("Poetry")]
         public async Task<IActionResult> PoetryAsync()
@@ -84,7 +84,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(20).ToList());
+            return Ok(response.Take(10).ToList());
         }
         [HttpGet("History")]
         public async Task<IActionResult> HistoryAsync()
@@ -94,7 +94,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(20).ToList());
+            return Ok(response.Take(10).ToList());
         }
         [HttpGet("ShortStories")]
         public async Task<IActionResult> ShortStoriesAsync()
@@ -104,7 +104,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(20).ToList());
+            return Ok(response.Take(10).ToList());
         }
         [HttpGet("Classics")]
         public async Task<IActionResult> ClassicsAsync()
@@ -114,7 +114,7 @@ namespace ReadleApp.Api.Controllers
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(20).ToList());
+            return Ok(response.Take(10).ToList());
         }
         [HttpGet("GetBookById/{Id}")]
         public async Task<ActionResult> GetBookAsync(string Id)
@@ -127,7 +127,36 @@ namespace ReadleApp.Api.Controllers
             }
             return Ok(response);
         }
-    
+        [HttpGet("Fulltext/{fulltext}")]
+        public async Task<IActionResult> GetFullText(string fulltext)
+        {
+            string response = await _bookApi!.GetFullText(fulltext);
+            if(response is null)
+            {
+                return BadRequest(new { Message = " No Ia on this Book" });
+            }
+            return Ok(response);
+        }
+        [HttpGet("GetDetails/{workkey}")]
+        public async Task<IActionResult> GetDetails(string workkey)
+        {
+            var response = await _bookApi!.GetDetails(workkey);
+            if(response is null)
+            {
+                return BadRequest(new { Message = "Something went wrong" });
+            }
+            return Ok(response);
+        }
+        [HttpGet("Cover/{cover}")]
+        public async Task<IActionResult> GetCover(int cover)
+        {
+            var http = new HttpClient();
+          var url = $"https://covers.openlibrary.org/b/id/{cover}-L.jpg";
+           var bytes = await http.GetByteArrayAsync(url);
+            var base64 = Convert.ToBase64String(bytes);
+            return Ok(base64);
+        }
+
 
 
 

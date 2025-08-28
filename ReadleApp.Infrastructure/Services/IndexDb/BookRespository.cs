@@ -35,7 +35,7 @@ namespace ReadleApp.Infrastructure.Services.IndexDb
 
         public async Task SaveTenBookAsync(List<OfflineReadingModel> books)
         {
-            foreach (var book in books.Take(20))
+            foreach (var book in books.Take(10))
             {   
                 await SaveBookAsync(book);
             }
@@ -44,7 +44,7 @@ namespace ReadleApp.Infrastructure.Services.IndexDb
         {
             var Results = await _db.GetRecords<OfflineReadingModel>("Books") ?? new List<OfflineReadingModel>();
 
-            return Results.Where(b => !string.IsNullOrEmpty(b.Category) && b.Category!.Equals(category, StringComparison.OrdinalIgnoreCase)).Take(20).ToList();
+            return Results.Where(b => !string.IsNullOrEmpty(b.Category) && b.Category!.Equals(category, StringComparison.OrdinalIgnoreCase)).Take(10).ToList();
 
 
         }

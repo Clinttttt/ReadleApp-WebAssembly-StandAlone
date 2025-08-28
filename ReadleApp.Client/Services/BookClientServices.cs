@@ -13,55 +13,56 @@ namespace ReadleApp.Client.Services
         {
             _http = http;
         }
-        public async Task<List<OfflineReadingModel>> MostReadAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> MostReadAsync()
         {
-            return await _http.GetFromJsonAsync<List<OfflineReadingModel>>("api/Books/MostRead")
-                   ?? new List<OfflineReadingModel>();
+                                                                     
+            return await _http.GetFromJsonAsync<List<OpenLibraryPreviewDetails>>("api/Books/MostRead")
+                   ?? new List<OpenLibraryPreviewDetails>();
         }
-        public async Task<List<OfflineReadingModel>> AdventureAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> AdventureAsync()
         {
-            return await _http.GetFromJsonAsync<List<OfflineReadingModel>>("api/Books/Adventure")
-                ?? new List<OfflineReadingModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryPreviewDetails>>("api/Books/Adventure")
+                ?? new List<OpenLibraryPreviewDetails>();
         }
-        public async Task<List<OfflineReadingModel>> RomanceAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> RomanceAsync()
         {
-            return await _http.GetFromJsonAsync<List<OfflineReadingModel>>("api/Books/Romance")
-                ?? new List<OfflineReadingModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryPreviewDetails>>("api/Books/Romance")
+                ?? new List<OpenLibraryPreviewDetails>();
         }
-        public async Task<List<OfflineReadingModel>> ScienceAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> ScienceAsync()
         {
-            return await _http.GetFromJsonAsync<List<OfflineReadingModel>>("api/Books/Science")
-                ?? new List<OfflineReadingModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryPreviewDetails>>("api/Books/Science")
+                ?? new List<OpenLibraryPreviewDetails>();
         }
-        public async Task<List<OfflineReadingModel>> MysteryAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> MysteryAsync()
         {
-            return await _http.GetFromJsonAsync<List<OfflineReadingModel>>("api/Books/Mystery")
-                ?? new List<OfflineReadingModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryPreviewDetails>>("api/Books/Mystery")
+                ?? new List<OpenLibraryPreviewDetails>();
         }
-        public async Task<List<OfflineReadingModel>> ChildrenAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> ChildrenAsync()
         {
-            return await _http.GetFromJsonAsync<List<OfflineReadingModel>>("api/Books/Children")
-                ?? new List<OfflineReadingModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryPreviewDetails>>("api/Books/Children")
+                ?? new List<OpenLibraryPreviewDetails>();
         }
-        public async Task<List<OfflineReadingModel>> PoetryAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> PoetryAsync()
         {
-            return await _http.GetFromJsonAsync<List<OfflineReadingModel>>("api/Books/Poetry")
-                ?? new List<OfflineReadingModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryPreviewDetails>>("api/Books/Poetry")
+                ?? new List<OpenLibraryPreviewDetails>();
         }
-        public async Task<List<OfflineReadingModel>> HistoryAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> HistoryAsync()
         {
-            return await _http.GetFromJsonAsync<List<OfflineReadingModel>>("api/Books/History")
-            ?? new List<OfflineReadingModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryPreviewDetails>>("api/Books/History")
+            ?? new List<OpenLibraryPreviewDetails>();
         }
-        public async Task<List<OfflineReadingModel>> ShortStoriesAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> ShortStoriesAsync()
         {
-            return await _http.GetFromJsonAsync<List<OfflineReadingModel>>("api/Books/ShortStories")
-                ?? new List<OfflineReadingModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryPreviewDetails>>("api/Books/ShortStories")
+                ?? new List<OpenLibraryPreviewDetails>();
         }
-        public async Task<List<OfflineReadingModel>> ClassicsAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> ClassicsAsync()
         {
-            return await _http.GetFromJsonAsync<List<OfflineReadingModel>>("api/Books/Classics")
-                ?? new List<OfflineReadingModel>();
+            return await _http.GetFromJsonAsync<List<OpenLibraryPreviewDetails>>("api/Books/Classics")
+                ?? new List<OpenLibraryPreviewDetails>();
         }
         public async Task<string> BookCover(string title, string author)
         {
@@ -72,8 +73,7 @@ namespace ReadleApp.Client.Services
             return await _http.GetFromJsonAsync<OpenLibraryDoc>($"api/Books/GetBookById/{workkey}");
 
         }
-       
-
+  
     
 }
 }

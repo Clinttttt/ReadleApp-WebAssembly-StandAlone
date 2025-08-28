@@ -25,7 +25,7 @@ namespace ReadleApp.Domain.Model
         public List<string>? AuthorName { get; set; }
 
         [JsonPropertyName("cover_i")]
-        public int? CoverKey { get; set; }
+        public int CoverKey { get; set; }
 
         [JsonPropertyName("has_fulltext")]
         public bool HasFullText { get; set; }

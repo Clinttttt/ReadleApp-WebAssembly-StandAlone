@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ReadleApp.Domain;
+using ReadleApp.Domain.Interface;
+using ReadleApp.Infrastructure.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,7 +17,9 @@ namespace ReadleApp.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration Configuration)
         {
 
-          
+            services.AddScoped<IMapToOffline, MappToOffline>();
+            services.AddScoped<IPreviewDetails, PreviewDetails>();
+            services.AddScoped<BookServerServices>();
             return services;
         }
 

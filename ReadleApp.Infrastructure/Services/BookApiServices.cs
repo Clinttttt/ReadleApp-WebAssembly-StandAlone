@@ -1,4 +1,5 @@
 ﻿using ReadleApp.Domain;
+using ReadleApp.Domain.Interface;
 using ReadleApp.Domain.Model;
 using System;
 using System.Collections.Generic;
@@ -20,15 +21,20 @@ namespace ReadleApp.Infrastructure.Services
     {
         private readonly Dictionary<string, string> _coverCache = new();
         private readonly HttpClient _http;
-        
-        public BookApiServices(HttpClient http)
+        private readonly IMapToOffline _toOffline;
+        private readonly IPreviewDetails _preview;
+
+        public BookApiServices(HttpClient http, IMapToOffline toOffline, IPreviewDetails preview)
         {
             _http = http;
-           
+            _toOffline = toOffline;
+            _preview = preview;
+
+
         }
 
 
-       
+
         public async Task<OpenLibraryEntities?> GetBookAsync(string workkey)
 
         {
@@ -36,26 +42,26 @@ namespace ReadleApp.Infrastructure.Services
             var editionsResponse = await _http.GetFromJsonAsync<OpenEditionResponse>($"https://openlibrary.org/works/{workkey}/editions.json");
             var bookshelvesResponse = await _http.GetFromJsonAsync<OpenLibraryBookShelves>($"https://openlibrary.org/works/{workkey}/bookshelves.json");
             var responsedoc = await _http.GetFromJsonAsync<OpenLibraryResponse>($"https://openlibrary.org/search.json?q={workkey}");
-            var firstDoc = responsedoc!.Docs!.FirstOrDefault( s => s.WorkKey == $"/works/{workkey}");
+            var firstDoc = responsedoc!.Docs!.FirstOrDefault(s => s.WorkKey == $"/works/{workkey}");
             var _LibraryEntities = new OpenLibraryEntities();
             if (firstDoc is not null)
-            {                      
-            var GetAi = firstDoc!.IA!.FirstOrDefault();
-            try
             {
+                var GetAi = firstDoc!.IA!.FirstOrDefault();
+                try
+                {
 
 
-                var FetchIa = await _http.GetStringAsync($"https://archive.org/stream/{GetAi}/{GetAi}_djvu.txt");
-                
+                    var FetchIa = await _http.GetStringAsync($"https://archive.org/stream/{GetAi}/{GetAi}_djvu.txt");
+
                     _LibraryEntities.FullText = FetchIa;
-               
-                //Console.Write($"FullText{_LibraryEntities.FullText}");
 
-            }
-            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                responsework!.FullText = "Full text not available.";
-            }
+                    //Console.Write($"FullText{_LibraryEntities.FullText}");
+
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    responsework!.FullText = "Full text not available.";
+                }
 
                 if (editionsResponse is not null)
                 {
@@ -82,7 +88,7 @@ namespace ReadleApp.Infrastructure.Services
                             _LibraryEntities.Title = firstDoc.Title;
                             _LibraryEntities.AuthorName = firstDoc.AuthorName;
                             _LibraryEntities.CoverKey = firstDoc.CoverKey;
-                          
+
                             _LibraryEntities.Languages = firstDoc.Languages;
                             _LibraryEntities.IA = firstDoc.IA!.FirstOrDefault();
 
@@ -94,117 +100,179 @@ namespace ReadleApp.Infrastructure.Services
             }
             return _LibraryEntities;
         }
-
-        public async Task<string?> CoverConvertBase64(int? CoverKey)
-        {         
-            if (!CoverKey.HasValue) return null;
-            var fetch = $"https://covers.openlibrary.org/b/id/{CoverKey}-L.jpg";
-            var convert = await _http.GetByteArrayAsync(fetch);
-            return Convert.ToBase64String(convert);
+        public async Task<string> GetFullText(string FirstIa)
+        {
+           return  await _http.GetStringAsync($"https://archive.org/stream/{FirstIa}/{FirstIa}_djvu.txt");
         }
-        public async Task<List<OfflineReadingModel>?> MostReadBookAsync()
-        { 
-        
-            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=fantasy&has_fulltext=true&ebook_access=public");        
-            var OfflineModel = new List<OfflineReadingModel>();
-    
-            if (response is not null)
-                foreach (var details in response!.Docs!.Take(20))
-            {
-                {
-                    string? description = null;
-                    var responsework = await _http.GetFromJsonAsync<OpenLibraryModel>($"https://openlibrary.org/works/{details.WorkKey}.json");
-                    if(responsework is not null)
-                    {
-                        details.DescriptionClones = responsework.DescriptionRaw;
-                        if (details.DescriptionClones is JsonElement element)
-                        { 
-                            if (element.ValueKind == JsonValueKind.String) description = element.GetString();
-                            if (element.ValueKind == JsonValueKind.Object && element.TryGetProperty("value", out var val))
-                                description = val.GetString();
-                        }
-                    }
-                    var fetchIa = details.IA!.FirstOrDefault();
-                    if(fetchIa is not null)
-                    {
-                        var FetchIa = await _http.GetStringAsync($"https://archive.org/stream/{fetchIa}/{fetchIa}_djvu.txt");
-                        details.FullText = FetchIa;
-                    }
-                    var ia = details.IA!.FirstOrDefault();
-                    var detail = new OfflineReadingModel
-                    {
-                        _Workkey = details.WorkKey,
-                        _IA = ia,
-                        _Title = details.Title,
-                        _AuthorName = details.AuthorName,
-                        _Description = description,
-                        _FullText = details.FullText,
-                        _CoverBase64 = await CoverConvertBase64(details.CoverKey),
-                        
-                    };
+        public async Task<OpenLibraryModel?> GetDetails(string workstring)
+        {
+           return  await _http.GetFromJsonAsync<OpenLibraryModel>($"https://openlibrary.org/works/{workstring}.json");
+        }
+   
+        public async Task<List<OpenLibraryPreviewDetails>?> MostReadBookAsync()
+        {
 
-                    OfflineModel.Add(detail);
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=fantasy&has_fulltext=true&ebook_access=public");
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
+
+            if (response is not null)
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    OfflineModel.Add(data);
                 }
 
-            }
-            
             return OfflineModel;
-            
-        }
-      
 
-        public async Task<List<OpenLibraryDoc>> AdventureAsync()  
+        }
+        public async Task<List<OpenLibraryPreviewDetails>> AdventureAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=adventure&has_fulltext=true&ebook_access=public");
-            return response!.Docs!.Take(20).ToList() ?? new List<OpenLibraryDoc>();
+          var OfflineModel = new List<OpenLibraryPreviewDetails>();
+
+            if (response is not null)
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    OfflineModel.Add(data);
+                }
+
+            return OfflineModel;
+
         }
-        public async Task<List<OpenLibraryDoc>> RomanceAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> RomanceAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=romance&has_fulltext=true&ebook_access=public");
-            return response!.Docs!.Take(20).ToList() ?? new List<OpenLibraryDoc>();
-        }
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
 
-        public async Task<List<OpenLibraryDoc>> ScienceAsync()
+            if (response is not null)
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    OfflineModel.Add(data);
+                }
+
+            return OfflineModel;
+
+        }
+        public async Task<List<OpenLibraryPreviewDetails>> ScienceAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=science&has_fulltext=true&ebook_access=public");
-            return response!.Docs!.Take(20).ToList() ?? new List<OpenLibraryDoc>();
+            var OfflineModel = new List<OpenLibraryPreviewDetails   >();
+
+            if (response is not null)
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    OfflineModel.Add(data);
+                }
+
+            return OfflineModel;
+
         }
 
-
-        public async Task<List<OpenLibraryDoc>> MysteryAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> MysteryAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=mystery&has_fulltext=true&ebook_access=public");
-            return response!.Docs!.Take(20).ToList() ?? new List<OpenLibraryDoc>();
+            var OfflineModel = new List<OpenLibraryPreviewDetails   >();
+
+            if (response is not null)
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    OfflineModel.Add(data);
+                }
+
+            return OfflineModel;
+
         }
-        public async Task<List<OpenLibraryDoc>> ChildrenAsync()
+
+        public async Task<List<OpenLibraryPreviewDetails>> ChildrenAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=children&has_fulltext=true&ebook_access=public");
-            return response!.Docs!.Take(20).ToList() ?? new List<OpenLibraryDoc>();
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
+
+            if (response is not null)
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    OfflineModel.Add(data);
+                }
+
+            return OfflineModel;
+
         }
-
-
-        public async Task<List<OpenLibraryDoc>> PoetryAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> PoetryAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=poetry&has_fulltext=true&ebook_access=public");
-            return response!.Docs!.Take(20).ToList() ?? new List<OpenLibraryDoc>();
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
+
+            if (response is not null)
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    OfflineModel.Add(data);
+                }
+
+            return OfflineModel;
+
         }
-        public async Task<List<OpenLibraryDoc>> HistoryAsync()
+
+        public async Task<List<OpenLibraryPreviewDetails>> HistoryAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=history&has_fulltext=true&ebook_access=public");
-            return response!.Docs!.Take(20).ToList() ?? new List<OpenLibraryDoc>();
-        }
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
 
-        public async Task<List<OpenLibraryDoc>> ShortStoriesAsync()
+            if (response is not null)
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    OfflineModel.Add(data);
+                }
+
+            return OfflineModel;
+
+        }
+        public async Task<List<OpenLibraryPreviewDetails>> ShortStoriesAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=short_stories&has_fulltext=true&ebook_access=public");
-            return response!.Docs!.Take(20).ToList() ?? new List<OpenLibraryDoc>();
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
+
+            if (response is not null)
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    OfflineModel.Add(data);
+                }
+
+            return OfflineModel;
+
         }
 
-
-        public async Task<List<OpenLibraryDoc>> ClassicsAsync()
+        public async Task<List<OpenLibraryPreviewDetails>> ClassicsAsync()
         {
             var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=classic_literature&has_fulltext=true&ebook_access=public");
-            return response!.Docs!.Take(20).ToList() ?? new List<OpenLibraryDoc>();
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
+
+            if (response is not null)
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    OfflineModel.Add(data);
+                }
+
+            return OfflineModel;
+
         }
 
 
