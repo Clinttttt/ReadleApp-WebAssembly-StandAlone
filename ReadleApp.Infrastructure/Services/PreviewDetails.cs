@@ -22,7 +22,7 @@ namespace ReadleApp.Infrastructure.Services
         public async Task<OpenLibraryPreviewDetails> PreviewAsync(OpenLibraryDoc doc)
         {
             var workstring = doc.WorkKey != null ? doc.WorkKey.Replace("/works/", "") ?? "" : null;
-            var responsework = await _bookServer.GetDetails(workstring!);
+            var responsework = await _bookServer.GetWorkDetails(workstring!);
             var details = new OpenLibraryPreviewDetails
             {
                 _Workkey = doc.WorkKey,

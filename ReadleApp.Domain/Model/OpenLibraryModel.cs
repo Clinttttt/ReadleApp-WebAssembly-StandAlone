@@ -31,6 +31,8 @@ namespace ReadleApp.Domain.Model
         [JsonPropertyName("subtitle")]
         public string? Subtitle { get; set; }
         public int? CoverKey { get; set; }
+        [JsonPropertyName("authors")]
+        public List<Author>? Authors { get; set; }
     }
 
 

@@ -48,7 +48,7 @@ namespace ReadleApp.Infrastructure.Services
         {
 
             var workstring = doc.WorkKey != null ? doc.WorkKey.Replace("/works/", "") ?? "" : null;
-            var responsework = await _bookServer.GetDetails(workstring!);
+            var responsework = await _bookServer.GetWorkDetails(workstring!);
 
 
             var description = responsework!.DescriptionRaw;

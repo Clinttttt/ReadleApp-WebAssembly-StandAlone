@@ -11,46 +11,26 @@
 @inject IBookRespository bookstorage
 @inject BookStateService bookState
 @inject BookApiServices bookApi
+@inject IGetDetailsServices ViewDetails
 
 
 
 
 
-
-
-
-@*@if (books == null)
+@if (books is not null)
 {
-    <h1>Empty Book</h1>
-}
-else
-{
-    <h1>@books.Title</h1>
-    <img class=" top-0 left-0 w-full h-full object-cover"
-    src="@books.CoverUrl"
-    alt="Book cover image" />
-    <img />
-    <h1>@books.AuthorName</h1>
-    <h1>@books.DescriptionRaw</h1>
-    <h1>@books.Ebooks</h1>
-    <h1>@books.languages</h1>
-    <h1>@books.Subjects</h1>
-    <h1>@books.SubjectsString</h1>
-}
-*@
+    <h1> title: @books.Title</h1>
+    <h1> author:@books.Authorname</h1>
+    <h1> subtitle: @books.SubTitle</h1>
+    <h1> publishdate: @books.Publishdate</h1>
+    <p> description: @books.DescriptionHelper</p>
+    <h1> subjects: @books.Substring</h1>
+    <h1> publishers: @books.Publishers</h1>
+    <h1> want to read: @books.Bookshelves?.WantToRead</h1>
+    <h1> current reading: @books.Bookshelves?.CurrentReading</h1>
+    <h1> already read: @books.Bookshelves?.AlreadyRead</h1>
 
 
-
-
-
-@if (books != null)
-{
-
-    <h1>@books.Title</h1>
- 
- 
-    
-    
 }
 else
 {
@@ -65,7 +45,7 @@ else
     [Parameter]
     public string? WorkKey { get; set; }
 
-    public OpenLibraryDoc? books;
+    public OpenLibraryViewDetails? books;
     string? bookCover;
     public bool loaded = false;
     public string? Isbn { get; set; }
@@ -75,27 +55,22 @@ else
     {
         try
         {
-
-            books = await bookstorage.GetBookById(WorkKey!);
-            /* Console.WriteLine($"Authors1:{books?.AuthorName}");
-            Console.WriteLine($"Authors1:{books?.Title}");*/
-          
-
-                 if (books == null)
-            {
-                books = await bookClient.GetBookById(WorkKey!);
-                Console.WriteLine($"Authors2:{books?.AuthorName}");
-                Console.WriteLine($"Title2:{books?.Title}");
-                books = await bookClient.GetBookById(WorkKey!);
-
-                }
-
+            books = await bookApi.ViewBookAsync(WorkKey!);
+            Console.WriteLine($"title:{ books?.Title}");
+            Console.WriteLine($"subtitle:{books?.SubTitle}");
+            Console.WriteLine($"publishdate:{books?.Publishdate}");
+            Console.WriteLine($"description:{books?.DescriptionHelper}");
+            Console.WriteLine($"subjects:{books?.Subjects}");
+            Console.WriteLine($"publishers:{books?.Publishers}");
+            Console.WriteLine($"want to read:{books?.Bookshelves?.WantToRead}");
+            Console.WriteLine($"current reading:{books?.Bookshelves?.CurrentReading}");
+            Console.WriteLine($"already read:{books?.Bookshelves?.AlreadyRead}");
+            Console.WriteLine($"workkey:{books?.Workkey}");
 
         }
         catch (HttpRequestException ex)
         {
-            Console.WriteLine($"Book fetch failed: {ex.Message}");
-            books = null;
+            Console.WriteLine($"Book fetch failed: {ex.Message}");         
         }
         StateHasChanged();
 

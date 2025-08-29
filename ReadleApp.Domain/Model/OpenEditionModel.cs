@@ -20,7 +20,7 @@ namespace ReadleApp.Domain.Model
         public string? Availability { get; set; }
 
 
-        // (optional)
+
         [JsonPropertyName("key")]
         public string? EditionKey { get; set; }
 
@@ -40,7 +40,7 @@ namespace ReadleApp.Domain.Model
         public List<LanguageNames>? Language { get; set; }
 
         [JsonPropertyName("publishers")]
-        public List<string>? Publisher { get; set; }
+        public string[]? Publisher { get; set; }
         [JsonPropertyName("isbn_13")]
         public List<string>? ISBN { get; set; }
 

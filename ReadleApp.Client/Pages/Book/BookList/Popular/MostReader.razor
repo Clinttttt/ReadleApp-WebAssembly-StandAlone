@@ -6,47 +6,48 @@
 @inject IBookRespository _db
 @inject BookClientServices bookClient
 @inject BookStateService bookState
-<div class="flex  overflow-x-scroll scrollbar-hide w-full">
-    <div class="gap-2 flex-nowrap flex ">
+<div class="flex overflow-x-scroll scrollbar-hide w-full">
+    <div class="gap-2 flex-nowrap flex">
         @if (!bookState.AllBook.ContainsKey("MostRead") || bookState.AllBook["MostRead"].Count == 0)
         {
-            <h1>empty</h1>
+
+            @for (int i = 0; i < 10; i++)
+            {
+                <div class="relative flex-shrink-0 rounded-t-lg w-20 h-32">
+                    <img class="absolute top-0 left-0 w-full h-full object-cover"
+                    src="img/loading.gif"
+                    alt="loading..." />
+                </div>
+            }
         }
         else
         {
-
-            @foreach (var book in bookState.AllBook["MostRead"])
+            @if ( bookState.AllBook.TryGetValue(category, out var books) && books.Count > 0)
             {
-                if (string.IsNullOrEmpty(book._CoverBase64) && string.IsNullOrEmpty(book._Workkey))
+                foreach (var book in books)
                 {
-                    <h1>No Book Cover</h1>
-                }
-                else
-                {
+                    <NavLink href="@($"/DisplayBook/{book.WorkString}")">
+                        <div class="relative flex-shrink-0 rounded-t-lg w-20 h-32">
 
-                    //System.Console.WriteLine($"Authorr: {book.AuthorName}");
-                    @* <NavLink href="@($"/DisplayBook/{Uri.EscapeDataString(book.WorkKey!)}")">*@
-                    <NavLink href="@($"/DisplayBook/{(book.WorkString)}")">
-                        <div class="relative flex-shrink-0  rounded-t-lg  w-20 h-32">
+                            <img class="absolute top-0 left-0 w-full h-full object-cover"
+                                 src="img/loading.gif"
+                                 alt="loading..." />
 
-                            <img class=" top-0 left-0 w-full h-full object-cover"
+                            <img class="absolute top-0 left-0 w-full h-full object-cover"
                                  src="@book._CoverBase64"
-                                 alt="Book cover image" />
-                        
-                          
-                         
+                                 alt="" />
                         </div>
                     </NavLink>
                 }
             }
         }
-
-
     </div>
 </div>
 
 
 @code {
+
+    private string category = "MostRead";
     protected override void OnInitialized()
     {
         bookState.OnChange += StateHasChanged;
@@ -58,3 +59,50 @@
         bookState.OnChange -= StateHasChanged;
     }
 }
+
+
+
+
+
+
+
+
+                            @*<div class="flex  overflow-x-scroll scrollbar-hide w-full">
+    <div class="gap-2 flex-nowrap flex ">
+
+        
+
+            @foreach (var book in bookState.AllBook["MostRead"])
+            {
+                if (string.IsNullOrEmpty(book._CoverBase64))
+                {
+                <img class="absolute top-0 left-0 w-full h-full object-cover"
+                     src="img/loading.gif"
+                     alt="loading..." />
+                }
+               
+
+                else
+                {
+
+                    //System.Console.WriteLine($"Authorr: {book.AuthorName}");
+                    @* <NavLink href="@($"/DisplayBook/{Uri.EscapeDataString(book.WorkKey!)}")">*@
+                    @*<NavLink href="@($"/DisplayBook/{(book.WorkString)}")">
+                        <div class="relative flex-shrink-0 rounded-t-lg w-20 h-32">
+
+                            <img class="absolute top-0 left-0 w-full h-full object-cover"
+                            src="img/loading.gif"
+                            alt="loading..." />
+
+                            <img class="absolute top-0 left-0 w-full h-full object-cover"
+                            src="@book._CoverBase64"
+                            alt="" />
+                        </div>
+                    </NavLink>
+                   
+                }
+            }
+        }
+
+
+    </div>*@

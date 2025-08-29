@@ -20,7 +20,7 @@ namespace ReadleApp.Infrastructure.Services
            return await _http.GetStringAsync($"https://localhost:7033/api/Books/Fulltext/{fulltext}");
 
         }
-        public async Task<OpenLibraryModel?> GetDetails(string workkey)
+        public async Task<OpenLibraryModel?> GetWorkDetails(string workkey)
         {
             return await _http.GetFromJsonAsync<OpenLibraryModel>($"https://localhost:7033/api/Books/GetDetails/{workkey}");
         }
@@ -28,6 +28,19 @@ namespace ReadleApp.Infrastructure.Services
         {
             return await _http.GetStringAsync($"https://localhost:7033/api/Books/Cover/{cover}");
         }
-
+        public async Task<OpenLibraryDoc?> GetDocDetails(string workkey)
+        {
+            return await _http.GetFromJsonAsync<OpenLibraryDoc>($"https://localhost:7033/api/Books/ViewBook/{workkey}");
+        }
+        public async Task<OpenLibraryBookShelves?> BookShelvesAsync(string workkey)
+        {
+            return await _http.GetFromJsonAsync<OpenLibraryBookShelves>($"https://localhost:7033/api/Books/BookShelves/{workkey}");
+        }
+        public async Task<Edition?> GetEditionAsync(string workkey)
+        {
+            return await _http.GetFromJsonAsync<Edition>($"https://localhost:7033/api/Books/Editions/{workkey}");
+        }
+    }
+       
     } 
-}
+

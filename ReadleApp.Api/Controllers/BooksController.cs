@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ReadleApp.Domain.Model;
 using ReadleApp.Infrastructure.Services;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -18,115 +19,187 @@ namespace ReadleApp.Api.Controllers
         [HttpGet("MostRead")]
         public async Task<IActionResult> MostRead()
         {
-            var response = await _bookApi!.MostReadBookAsync();
-            if (response == null || response.Count == 0)
+            var books = new List<OpenLibraryPreviewDetails>();
+
+            await foreach (var book in _bookApi!.MostReadBookAsync()!)
+            {
+                books.Add(book);
+            }
+
+            if (books.Count == 0)
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+
+            return Ok(books);
         }
+
         [HttpGet("Adventure")]
         public async Task<IActionResult> Adventure()
         {
-            var response = await _bookApi!.AdventureAsync();
-            if (response == null || response.Count == 0)
+            var books = new List<OpenLibraryPreviewDetails>();
+
+            await foreach (var book in _bookApi!.AdventureAsync()!)
+            {
+                books.Add(book);
+            }
+
+            if (books.Count == 0)
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+
+            return Ok(books);
         }
 
         [HttpGet("Romance")]
         public async Task<IActionResult> RomanceAsync()
         {
-            var response = await _bookApi!.RomanceAsync();
-            if (response == null || response.Count == 0)
+            var books = new List<OpenLibraryPreviewDetails>();
+
+            await foreach (var book in _bookApi!.RomanceAsync()!)
+            {
+                books.Add(book);
+            }
+
+            if (books.Count == 0)
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+
+            return Ok(books);
         }
+
         [HttpGet("Science")]
         public async Task<IActionResult> ScienceAsync()
         {
-            var response = await _bookApi!.ScienceAsync();
-            if (response == null || response.Count == 0)
+            var books = new List<OpenLibraryPreviewDetails>();
+
+            await foreach (var book in _bookApi!.ScienceAsync()!)
+            {
+                books.Add(book);
+            }
+
+            if (books.Count == 0)
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+
+            return Ok(books);
         }
+
         [HttpGet("Mystery")]
         public async Task<IActionResult> MysteryAsync()
         {
-            var response = await _bookApi!.MysteryAsync();
-            if (response == null || response.Count == 0)
+            var books = new List<OpenLibraryPreviewDetails>();
+
+            await foreach (var book in _bookApi!.MysteryAsync()!)
+            {
+                books.Add(book);
+            }
+
+            if (books.Count == 0)
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+
+            return Ok(books);
         }
+
+
         [HttpGet("Children")]
         public async Task<IActionResult> ChildrenAsync()
         {
-            var response = await _bookApi!.ChildrenAsync();
-            if (response == null || response.Count == 0)
+            var books = new List<OpenLibraryPreviewDetails>();
+
+            await foreach (var book in _bookApi!.ChildrenAsync()!)
+            {
+                books.Add(book);
+            }
+
+            if (books.Count == 0)
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+
+            return Ok(books);
         }
+
+
         [HttpGet("Poetry")]
         public async Task<IActionResult> PoetryAsync()
         {
-            var response = await _bookApi!.PoetryAsync();
-            if (response == null || response.Count == 0)
+            var books = new List<OpenLibraryPreviewDetails>();
+
+            await foreach (var book in _bookApi!.PoetryAsync()!)
+            {
+                books.Add(book);
+            }
+
+            if (books.Count == 0)
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+
+            return Ok(books);
         }
+
+
         [HttpGet("History")]
         public async Task<IActionResult> HistoryAsync()
         {
-            var response = await _bookApi!.HistoryAsync();
-            if (response == null || response.Count == 0)
+            var books = new List<OpenLibraryPreviewDetails>();
+
+            await foreach (var book in _bookApi!.HistoryAsync()!)
+            {
+                books.Add(book);
+            }
+
+            if (books.Count == 0)
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+
+            return Ok(books);
         }
+
         [HttpGet("ShortStories")]
         public async Task<IActionResult> ShortStoriesAsync()
         {
-            var response = await _bookApi!.ShortStoriesAsync();
-            if (response == null || response.Count == 0)
+            var books = new List<OpenLibraryPreviewDetails>();
+
+            await foreach (var book in _bookApi!.ShortStoriesAsync()!)
+            {
+                books.Add(book);
+            }
+
+            if (books.Count == 0)
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+
+            return Ok(books);
         }
+
         [HttpGet("Classics")]
         public async Task<IActionResult> ClassicsAsync()
         {
-            var response = await _bookApi!.ClassicsAsync();
-            if (response == null || response.Count == 0)
+            var books = new List<OpenLibraryPreviewDetails>();
+
+            await foreach (var book in _bookApi!.ClassicsAsync()!)
+            {
+                books.Add(book);
+            }
+
+            if (books.Count == 0)
             {
                 return BadRequest(new { message = "No Book" });
             }
-            return Ok(response.Take(10).ToList());
+
+            return Ok(books);
         }
-        [HttpGet("GetBookById/{Id}")]
-        public async Task<ActionResult> GetBookAsync(string Id)
-        {
-            string WorkString = Id!.Replace("/works/", "") ?? "";
-            var response = await _bookApi!.GetBookAsync(WorkString);
-            if(response == null)
-            {
-                return BadRequest(new { Message = "No Book" });
-            }
-            return Ok(response);
-        }
+
+      
         [HttpGet("Fulltext/{fulltext}")]
         public async Task<IActionResult> GetFullText(string fulltext)
         {
@@ -156,10 +229,35 @@ namespace ReadleApp.Api.Controllers
             var base64 = Convert.ToBase64String(bytes);
             return Ok(base64);
         }
-
-
-
-
-
+        [HttpGet("ViewBook/{workkey}")]
+        public async Task<IActionResult> ViewBook(string workkey)
+        {
+            var response = await _bookApi!.ViewBook(workkey);
+            if(response is null)
+            {
+                return BadRequest(new { Messsage = "No Details"});
+            }
+            return Ok(response);
+        }
+        [HttpGet("BookShelves/{workkey}")]
+        public async Task<IActionResult> GetBookShelves(string workkey)
+        {
+            var responsse = await _bookApi!.BookShelvesAsync(workkey);
+            if(responsse is null)
+            {
+                return BadRequest(new { Message = "No Details" });
+            }
+            return Ok(responsse);
+        }
+        [HttpGet("Editions/{workkey}")]
+        public async Task<IActionResult> GetEdition(string workkey)
+        {
+            var response = await _bookApi!.GetEditionAsync(workkey);
+            if(response is null)
+            {
+                return BadRequest(new { Message = "No Details" });
+            }
+            return Ok(response);
+        }
     }
 }

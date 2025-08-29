@@ -80,7 +80,7 @@ namespace ReadleApp.Client.Services
                     book.Category = category;
                    AllBook[category].Add(book);
             }
-            AllBook[category] = books;
+          
             NotifyStateChanged();
         }
 

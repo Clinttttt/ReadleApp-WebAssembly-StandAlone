@@ -23,25 +23,256 @@ namespace ReadleApp.Infrastructure.Services
         private readonly HttpClient _http;
         private readonly IMapToOffline _toOffline;
         private readonly IPreviewDetails _preview;
+        private readonly IGetDetailsServices _getDetails;
 
-        public BookApiServices(HttpClient http, IMapToOffline toOffline, IPreviewDetails preview)
+        public BookApiServices(HttpClient http, IMapToOffline toOffline, IPreviewDetails preview, IGetDetailsServices getDetails)
         {
             _http = http;
             _toOffline = toOffline;
             _preview = preview;
+            _getDetails = getDetails;
 
 
         }
 
 
 
-        public async Task<OpenLibraryEntities?> GetBookAsync(string workkey)
-
+        public async Task<OpenLibraryViewDetails?> ViewBookAsync(string workkey)
         {
-            var responsework = await _http.GetFromJsonAsync<OpenLibraryModel>($"https://openlibrary.org/works/{workkey}.json");
-            var editionsResponse = await _http.GetFromJsonAsync<OpenEditionResponse>($"https://openlibrary.org/works/{workkey}/editions.json");
-            var bookshelvesResponse = await _http.GetFromJsonAsync<OpenLibraryBookShelves>($"https://openlibrary.org/works/{workkey}/bookshelves.json");
-            var responsedoc = await _http.GetFromJsonAsync<OpenLibraryResponse>($"https://openlibrary.org/search.json?q={workkey}");
+            return await _getDetails.GetBookyAsync(workkey);
+
+        }
+
+
+        public async Task<string> GetFullText(string FirstIa)
+        {
+           return  await _http.GetStringAsync($"https://archive.org/stream/{FirstIa}/{FirstIa}_djvu.txt");
+        }
+        public async Task<OpenLibraryModel?> GetDetails(string workstring)
+        {
+           return  await _http.GetFromJsonAsync<OpenLibraryModel>($"https://openlibrary.org/works/{workstring}.json");
+        }
+        public async Task<OpenLibraryDoc?> ViewBook(string workkey)
+        {
+           
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>($"https://openlibrary.org/search.json?q={workkey}");
+            return response!.Docs!.FirstOrDefault();
+         }
+        public async Task<OpenLibraryBookShelves?> BookShelvesAsync(string workkey)
+        {
+            return await _http.GetFromJsonAsync<OpenLibraryBookShelves>($"https://openlibrary.org/works/{workkey}/bookshelves.json");
+        }
+        public async Task<Edition?> GetEditionAsync(string workkey)
+        {
+            var response = await _http.GetFromJsonAsync<OpenEditionResponse>($"https://openlibrary.org/works/{workkey}/editions.json"
+            );
+            return response?.Entries!.FirstOrDefault(e => !string.IsNullOrEmpty(e.SubTitle));
+        }
+
+
+
+
+
+
+
+
+        public async IAsyncEnumerable<OpenLibraryPreviewDetails>? MostReadBookAsync()
+        {
+
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=fantasy&has_fulltext=true&ebook_access=public");
+
+
+            if (response is not null)
+            {
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    yield return data;
+                }
+
+            } 
+        }
+
+
+
+        
+        public async IAsyncEnumerable<OpenLibraryPreviewDetails> AdventureAsync()
+        {
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=adventure&has_fulltext=true&ebook_access=public");
+          var OfflineModel = new List<OpenLibraryPreviewDetails>();
+
+            if (response is not null)
+            {
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    yield return data;
+                }
+
+            }
+        }
+
+        public async IAsyncEnumerable<OpenLibraryPreviewDetails> RomanceAsync()
+        {
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=romance&has_fulltext=true&ebook_access=public");
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
+
+            if (response is not null)
+            {
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    yield return data;
+                }
+
+            }
+        }
+        public async IAsyncEnumerable<OpenLibraryPreviewDetails> ScienceAsync()
+        {
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=science&has_fulltext=true&ebook_access=public");
+            var OfflineModel = new List<OpenLibraryPreviewDetails   >();
+
+            if (response is not null)
+            {
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    yield return data;
+                }
+
+            }
+        }
+
+        public async IAsyncEnumerable<OpenLibraryPreviewDetails> MysteryAsync()
+        {
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=mystery&has_fulltext=true&ebook_access=public");
+            var OfflineModel = new List<OpenLibraryPreviewDetails   >();
+
+            if (response is not null)
+            {
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    yield return data;
+                }
+
+            }
+        }
+
+        public async IAsyncEnumerable<OpenLibraryPreviewDetails> ChildrenAsync()
+        {
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=children&has_fulltext=true&ebook_access=public");
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
+
+            if (response is not null)
+            {
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    yield return data;
+                }
+
+            }
+        }
+        public async IAsyncEnumerable<OpenLibraryPreviewDetails> PoetryAsync()
+        {
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=poetry&has_fulltext=true&ebook_access=public");
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
+            if (response is not null)
+            {
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    yield return data;
+                }
+
+            }
+        }
+
+        public async IAsyncEnumerable<OpenLibraryPreviewDetails> HistoryAsync()
+        {
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=history&has_fulltext=true&ebook_access=public");
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
+
+            if (response is not null)
+            {
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    yield return data;
+                }
+
+            }
+        }
+        public async IAsyncEnumerable<OpenLibraryPreviewDetails> ShortStoriesAsync()
+        {
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=short_stories&has_fulltext=true&ebook_access=public");
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
+
+            if (response is not null)
+            {
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    yield return data;
+                }
+
+            }
+        }
+        public async IAsyncEnumerable<OpenLibraryPreviewDetails> ClassicsAsync()
+        {
+            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=classic_literature&has_fulltext=true&ebook_access=public");
+            var OfflineModel = new List<OpenLibraryPreviewDetails>();
+
+            if (response is not null)
+            {
+                foreach (var details in response!.Docs!.Take(10))
+
+                {
+                    var data = await _preview.PreviewAsync(details);
+                    yield return data;
+                }
+
+            }
+        }
+
+
+
+
+
+
+
+        /*   foreach (var a in responsework!.Authors!)
+                 {
+                     var author = await _http.GetFromJsonAsync<AuthorNames>($"https://openlibrary.org{a.author!.Key}.json");
+
+                     Console.WriteLine($"name{author!.Name}");
+                     responsework.AuthorName = author.Name;
+                 }*/
+
+        /*      responsework.Publisher = editionsResponse.Entries.Where(s => s.Publisher != null).SelectMany(s => s.Publisher!).ToList();
+              responsework.ISBN = editionsResponse.Entries.Where(s => s.ISBN != null).SelectMany(s => s.ISBN!).Take(1).ToList();
+              responsework.PubLishedDate = editionsResponse.Entries.Select(s => s.PublishedDate).FirstOrDefault( s => !string.IsNullOrEmpty(s));
+              responsework.SubTitle = editionsResponse.Entries.Select(s => s.SubTitle).FirstOrDefault(s => !string.IsNullOrEmpty(s));
+              responsework.Series = editionsResponse.Entries.Where(s => s.Series != null).SelectMany(s => s.Series!).ToList();
+              responsework.PublishedPlace = editionsResponse.Entries.Where(s => s.PublishedPlace != null).SelectMany(s => s.PublishedPlace!).ToList();
+              responsework.OCAID = editionsResponse.Entries.Select(s => s.OCAID).FirstOrDefault(s => !string.IsNullOrEmpty(s));
+         */
+    }
+}
+
+
+
+/*ttp.GetFromJsonAsync<OpenLibraryResponse>($"https://openlibrary.org/search.json?q={workkey}");
             var firstDoc = responsedoc!.Docs!.FirstOrDefault(s => s.WorkKey == $"/works/{workkey}");
             var _LibraryEntities = new OpenLibraryEntities();
             if (firstDoc is not null)
@@ -99,204 +330,4 @@ namespace ReadleApp.Infrastructure.Services
                 }
             }
             return _LibraryEntities;
-        }
-        public async Task<string> GetFullText(string FirstIa)
-        {
-           return  await _http.GetStringAsync($"https://archive.org/stream/{FirstIa}/{FirstIa}_djvu.txt");
-        }
-        public async Task<OpenLibraryModel?> GetDetails(string workstring)
-        {
-           return  await _http.GetFromJsonAsync<OpenLibraryModel>($"https://openlibrary.org/works/{workstring}.json");
-        }
-   
-        public async Task<List<OpenLibraryPreviewDetails>?> MostReadBookAsync()
-        {
-
-            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=fantasy&has_fulltext=true&ebook_access=public");
-            var OfflineModel = new List<OpenLibraryPreviewDetails>();
-
-            if (response is not null)
-                foreach (var details in response!.Docs!.Take(10))
-
-                {
-                    var data = await _preview.PreviewAsync(details);
-                    OfflineModel.Add(data);
-                }
-
-            return OfflineModel;
-
-        }
-        public async Task<List<OpenLibraryPreviewDetails>> AdventureAsync()
-        {
-            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=adventure&has_fulltext=true&ebook_access=public");
-          var OfflineModel = new List<OpenLibraryPreviewDetails>();
-
-            if (response is not null)
-                foreach (var details in response!.Docs!.Take(10))
-
-                {
-                    var data = await _preview.PreviewAsync(details);
-                    OfflineModel.Add(data);
-                }
-
-            return OfflineModel;
-
-        }
-        public async Task<List<OpenLibraryPreviewDetails>> RomanceAsync()
-        {
-            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=romance&has_fulltext=true&ebook_access=public");
-            var OfflineModel = new List<OpenLibraryPreviewDetails>();
-
-            if (response is not null)
-                foreach (var details in response!.Docs!.Take(10))
-
-                {
-                    var data = await _preview.PreviewAsync(details);
-                    OfflineModel.Add(data);
-                }
-
-            return OfflineModel;
-
-        }
-        public async Task<List<OpenLibraryPreviewDetails>> ScienceAsync()
-        {
-            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=science&has_fulltext=true&ebook_access=public");
-            var OfflineModel = new List<OpenLibraryPreviewDetails   >();
-
-            if (response is not null)
-                foreach (var details in response!.Docs!.Take(10))
-
-                {
-                    var data = await _preview.PreviewAsync(details);
-                    OfflineModel.Add(data);
-                }
-
-            return OfflineModel;
-
-        }
-
-        public async Task<List<OpenLibraryPreviewDetails>> MysteryAsync()
-        {
-            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=mystery&has_fulltext=true&ebook_access=public");
-            var OfflineModel = new List<OpenLibraryPreviewDetails   >();
-
-            if (response is not null)
-                foreach (var details in response!.Docs!.Take(10))
-
-                {
-                    var data = await _preview.PreviewAsync(details);
-                    OfflineModel.Add(data);
-                }
-
-            return OfflineModel;
-
-        }
-
-        public async Task<List<OpenLibraryPreviewDetails>> ChildrenAsync()
-        {
-            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=children&has_fulltext=true&ebook_access=public");
-            var OfflineModel = new List<OpenLibraryPreviewDetails>();
-
-            if (response is not null)
-                foreach (var details in response!.Docs!.Take(10))
-
-                {
-                    var data = await _preview.PreviewAsync(details);
-                    OfflineModel.Add(data);
-                }
-
-            return OfflineModel;
-
-        }
-        public async Task<List<OpenLibraryPreviewDetails>> PoetryAsync()
-        {
-            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=poetry&has_fulltext=true&ebook_access=public");
-            var OfflineModel = new List<OpenLibraryPreviewDetails>();
-
-            if (response is not null)
-                foreach (var details in response!.Docs!.Take(10))
-
-                {
-                    var data = await _preview.PreviewAsync(details);
-                    OfflineModel.Add(data);
-                }
-
-            return OfflineModel;
-
-        }
-
-        public async Task<List<OpenLibraryPreviewDetails>> HistoryAsync()
-        {
-            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=history&has_fulltext=true&ebook_access=public");
-            var OfflineModel = new List<OpenLibraryPreviewDetails>();
-
-            if (response is not null)
-                foreach (var details in response!.Docs!.Take(10))
-
-                {
-                    var data = await _preview.PreviewAsync(details);
-                    OfflineModel.Add(data);
-                }
-
-            return OfflineModel;
-
-        }
-        public async Task<List<OpenLibraryPreviewDetails>> ShortStoriesAsync()
-        {
-            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=short_stories&has_fulltext=true&ebook_access=public");
-            var OfflineModel = new List<OpenLibraryPreviewDetails>();
-
-            if (response is not null)
-                foreach (var details in response!.Docs!.Take(10))
-
-                {
-                    var data = await _preview.PreviewAsync(details);
-                    OfflineModel.Add(data);
-                }
-
-            return OfflineModel;
-
-        }
-
-        public async Task<List<OpenLibraryPreviewDetails>> ClassicsAsync()
-        {
-            var response = await _http.GetFromJsonAsync<OpenLibraryResponse>("https://openlibrary.org/search.json?subject=classic_literature&has_fulltext=true&ebook_access=public");
-            var OfflineModel = new List<OpenLibraryPreviewDetails>();
-
-            if (response is not null)
-                foreach (var details in response!.Docs!.Take(10))
-
-                {
-                    var data = await _preview.PreviewAsync(details);
-                    OfflineModel.Add(data);
-                }
-
-            return OfflineModel;
-
-        }
-
-
-
-
-
-
-
-
-        /*   foreach (var a in responsework!.Authors!)
-                 {
-                     var author = await _http.GetFromJsonAsync<AuthorNames>($"https://openlibrary.org{a.author!.Key}.json");
-
-                     Console.WriteLine($"name{author!.Name}");
-                     responsework.AuthorName = author.Name;
-                 }*/
-
-        /*      responsework.Publisher = editionsResponse.Entries.Where(s => s.Publisher != null).SelectMany(s => s.Publisher!).ToList();
-              responsework.ISBN = editionsResponse.Entries.Where(s => s.ISBN != null).SelectMany(s => s.ISBN!).Take(1).ToList();
-              responsework.PubLishedDate = editionsResponse.Entries.Select(s => s.PublishedDate).FirstOrDefault( s => !string.IsNullOrEmpty(s));
-              responsework.SubTitle = editionsResponse.Entries.Select(s => s.SubTitle).FirstOrDefault(s => !string.IsNullOrEmpty(s));
-              responsework.Series = editionsResponse.Entries.Where(s => s.Series != null).SelectMany(s => s.Series!).ToList();
-              responsework.PublishedPlace = editionsResponse.Entries.Where(s => s.PublishedPlace != null).SelectMany(s => s.PublishedPlace!).ToList();
-              responsework.OCAID = editionsResponse.Entries.Select(s => s.OCAID).FirstOrDefault(s => !string.IsNullOrEmpty(s));
-         */
-    }
-}
+        }*/
