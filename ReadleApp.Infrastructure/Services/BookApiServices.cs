@@ -64,9 +64,12 @@ namespace ReadleApp.Infrastructure.Services
         }
         public async Task<Edition?> GetEditionAsync(string workkey)
         {
-            var response = await _http.GetFromJsonAsync<OpenEditionResponse>($"https://openlibrary.org/works/{workkey}/editions.json"
-            );
+            var response = await _http.GetFromJsonAsync<OpenEditionResponse>($"https://openlibrary.org/works/{workkey}/editions.json");
             return response?.Entries!.FirstOrDefault(e => !string.IsNullOrEmpty(e.SubTitle));
+        }
+        public async Task<OpenLibraryRatings?> RatingsAsync(string workkey)
+        {
+            return await _http.GetFromJsonAsync<OpenLibraryRatings>($"https://openlibrary.org/works/{workkey}/ratings.json");
         }
 
 

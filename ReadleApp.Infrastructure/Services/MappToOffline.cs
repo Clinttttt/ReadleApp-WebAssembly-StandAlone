@@ -45,7 +45,7 @@ namespace ReadleApp.Infrastructure.Services
 
 
         public async Task<OfflineReadingModel> GetReadingModelAsync(OpenLibraryDoc doc)
-        {
+        { 
 
             var workstring = doc.WorkKey != null ? doc.WorkKey.Replace("/works/", "") ?? "" : null;
             var responsework = await _bookServer.GetWorkDetails(workstring!);

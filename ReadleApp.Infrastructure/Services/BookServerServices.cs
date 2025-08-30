@@ -40,6 +40,10 @@ namespace ReadleApp.Infrastructure.Services
         {
             return await _http.GetFromJsonAsync<Edition>($"https://localhost:7033/api/Books/Editions/{workkey}");
         }
+        public async Task<OpenLibraryRatings?> RatingAsync(string workkey)
+        {
+            return await _http.GetFromJsonAsync<OpenLibraryRatings>($"https://localhost:7033/api/Books/Ratings/{workkey}");
+        }
     }
        
     } 

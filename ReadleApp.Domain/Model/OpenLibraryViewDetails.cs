@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using static ReadleApp.Domain.Model.OpenLibraryBookShelves;
+using static ReadleApp.Domain.Model.OpenLibraryRatings;
 
 namespace ReadleApp.Domain.Model
 {
@@ -21,17 +22,15 @@ namespace ReadleApp.Domain.Model
         public List<string>? Subjects { get; set; }
         public string[]? Publishers { get; set; }
         public Bookshelve? Bookshelves { get; set; }
+        public Rating? Rating { get; set; }
+        public Summary? Summary { get; set; }
+        public string? FullText { get; set; }
 
-
-
-
-
-
-
-
-
+        public string SummaryHelper => Summary != null ? string.Join(",", Summary) : string.Empty;
+        public string RatingHelper => Rating != null ? string.Join(",", Rating) : string.Empty;
+        public string AuthorHelper => Authorname != null ? string.Join(",", Authorname) : string.Empty;
         public string Substring => Subjects != null ? string.Join(",", Subjects.Take(5)) : string.Empty;
-
+        public string PublisherHelper => Publishers != null ? string.Join(",", Publishers) : string.Empty;
         public string? WorkString => Workkey != null ? Workkey!.Replace("/works/", "") ?? "" : null;
 
         public string? _CoverBase64
@@ -56,6 +55,14 @@ namespace ReadleApp.Domain.Model
                 }
 
                 return Description?.ToString() ?? string.Empty;
+            }
+        }
+        public string? CoverHelper
+        {
+            get
+            {
+                int? key = Coverkey;
+                return key.HasValue ? $"https://covers.openlibrary.org/b/id/{key}-L.jpg" : null;
             }
         }
     }

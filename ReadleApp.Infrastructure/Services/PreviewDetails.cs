@@ -27,8 +27,6 @@ namespace ReadleApp.Infrastructure.Services
             {
                 _Workkey = doc.WorkKey,
                 _coverkey = doc.CoverKey,
-               // _Title = doc.Title,
-               // AuthorName = doc.AuthorName,
                 
             };
             return details;

@@ -259,5 +259,15 @@ namespace ReadleApp.Api.Controllers
             }
             return Ok(response);
         }
+        [HttpGet("Ratings/{workkey}")]
+        public async Task<IActionResult> Ratings(string workkey)
+        {
+            var response = await _bookApi!.RatingsAsync(workkey);
+            if(response is null)
+            {
+                return BadRequest(new { Message = "No Details" });
+            }
+            return Ok(response);
+        }
     }
 }

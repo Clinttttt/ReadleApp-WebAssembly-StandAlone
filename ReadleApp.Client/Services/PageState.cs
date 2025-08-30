@@ -14,9 +14,10 @@
             ListYoungReaders,
             ListPoetry,
             ListHistory,
-            ListShortStories
+            ListShortStories,
+            DisplayBook
         }
-        public PageView CurrentView { get; set; } = PageView.bookshelve;
+        public PageView CurrentView { get; private set; } = PageView.bookshelve;
         public event Action? Onchange;
 
         public void SetView(PageView view)

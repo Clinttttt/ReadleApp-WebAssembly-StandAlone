@@ -21,11 +21,18 @@ namespace ReadleApp.Infrastructure.RespositoryServices
 
         public async Task<OpenLibraryViewDetails> GetBookyAsync(string workkey)
         {
+
             var responsework = await _services.GetWorkDetails(workkey);
             var responsedoc = await _services.GetDocDetails(workkey);
             var responseshelves = await _services.BookShelvesAsync(workkey);
             var responseedition = await _services.GetEditionAsync(workkey);
-
+            var responserating = await _services.RatingAsync(workkey);
+            var FirstIa = responsedoc?.IA!.FirstOrDefault();
+            string? FullPlainText = null;
+            if (!string.IsNullOrEmpty(FirstIa))
+            {
+                FullPlainText = await _services.GetFulltext(FirstIa);
+            }
             if (responsedoc is null)
                 return new OpenLibraryViewDetails();
 
@@ -41,6 +48,9 @@ namespace ReadleApp.Infrastructure.RespositoryServices
                 Subjects = responsework?.Subject,
                 Publishers = responseedition?.Publisher,
                 Bookshelves = responseshelves?.GetBookshelves,
+                Rating = responserating?.Ratings,
+                Summary = responserating?.summary,
+                FullText = FullPlainText,
             };
             return viewdetails;
         }

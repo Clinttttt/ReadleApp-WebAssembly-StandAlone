@@ -12,30 +12,63 @@
 @inject BookStateService bookState
 @inject BookApiServices bookApi
 @inject IGetDetailsServices ViewDetails
-
-
+@inject PageState pageState
+@using HtmlAgilityPack;
+@using System.Text.RegularExpressions
 
 
 
 @if (books is not null)
 {
-    <h1> title: @books.Title</h1>
-    <h1> author:@books.Authorname</h1>
-    <h1> subtitle: @books.SubTitle</h1>
-    <h1> publishdate: @books.Publishdate</h1>
-    <p> description: @books.DescriptionHelper</p>
-    <h1> subjects: @books.Substring</h1>
-    <h1> publishers: @books.Publishers</h1>
-    <h1> want to read: @books.Bookshelves?.WantToRead</h1>
-    <h1> current reading: @books.Bookshelves?.CurrentReading</h1>
-    <h1> already read: @books.Bookshelves?.AlreadyRead</h1>
+    <div class="flex flex-col overflow-hidden justify-start items-center w-screen h-full">
+
+        <NavLink href="/MainMenu" class="btn w-full  shadow-md flex justify-between items-center  bg-transparent  ">
+
+            <svg class="w-6 h-6 text-slate-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.1" d="m15 19-7-7 7-7" />
+            </svg>
+
+            <span class="font-normal text-slate-500">Enjoy Readle</span>
+        </NavLink>
 
 
+
+
+
+        <div class="rating">
+            @for (int i = 1; i <= 5; i++)
+            {
+                <input type="radio" 
+                name="rating" 
+                class="mask mask-star-2 bg-orange-400" 
+                aria-label="@($"{i} star")"
+                checked="@(i == Math.Round(books.Summary?.average ?? 0))" 
+                disabled />
+            }
+        </div>
+
+        @if (books.Summary is not null)
+        {
+            <p>Average Rating: @books.Summary.average.ToString("0.0") / 5 (@books.Summary.count votes)</p>
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
 }
 else
 {
 
-    <h1>No Book</h1>
 }
 
 
@@ -55,101 +88,62 @@ else
     {
         try
         {
+            pageState.Onchange += StateHasChanged;
             books = await bookApi.ViewBookAsync(WorkKey!);
-            Console.WriteLine($"title:{ books?.Title}");
+            Console.WriteLine($"title:{books?.Title}");
             Console.WriteLine($"subtitle:{books?.SubTitle}");
             Console.WriteLine($"publishdate:{books?.Publishdate}");
             Console.WriteLine($"description:{books?.DescriptionHelper}");
-            Console.WriteLine($"subjects:{books?.Subjects}");
-            Console.WriteLine($"publishers:{books?.Publishers}");
+            Console.WriteLine($"subjects:{books?.Substring}");
+            Console.WriteLine($"publishers:{books?.PublisherHelper}");
             Console.WriteLine($"want to read:{books?.Bookshelves?.WantToRead}");
             Console.WriteLine($"current reading:{books?.Bookshelves?.CurrentReading}");
             Console.WriteLine($"already read:{books?.Bookshelves?.AlreadyRead}");
             Console.WriteLine($"workkey:{books?.Workkey}");
+            Console.WriteLine($"rating:{books?.RatingHelper}");
+            Console.WriteLine($"summary:{books?.SummaryHelper}");
 
+         
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(books?.FullText ?? "");
+
+            // Extract only the inner text (no tags, just story)
+            string storyOnly = htmlDoc.DocumentNode.InnerText;
+
+            // Clean up extra whitespace
+            storyOnly = Regex.Replace(storyOnly, @"\s+", " ").Trim();
+
+            Console.WriteLine(storyOnly);
         }
         catch (HttpRequestException ex)
         {
-            Console.WriteLine($"Book fetch failed: {ex.Message}");         
+            Console.WriteLine($"Book fetch failed: {ex.Message}");
         }
-        StateHasChanged();
-
-
-
     }
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @*@code{
-    [Parameter]
-    public string? WorkKey { get; set; }
-    @inject HttpClient Http
-    public string? PlainText { get; set; }
-    public OpenLibraryModel? Books { get; set; }
-    protected override async Task OnInitializedAsync()
+       public void Dispose()
     {
-
-
-
-        string url =  "https://ia600408.us.archive.org/11/items/alicesadventures00carr_16/alicesadventures00carr_16_djvu.txt";
-        PlainText = await Http.GetStringAsync(url);
-        Console.WriteLine($"Text:{PlainText}");
-
+        pageState.Onchange -= StateHasChanged;
     }
-}*@
-
-
-@*@page "/DisplayBook/{WorkKey}"
-@using ReadleApp.Client.Services
-@using ReadleApp.Domain.Interface
-@using ReadleApp.Domain.Model
-@inject BookClientServices bookClient
-@inject IBookRespository bookstorage
-@try
-{
-    @if (Books != null)
-    {
-
-    }
-    else
-    {
-
-        <h1>Empty</h1>
-    }
-}catch(Exception ex)
-{
-    Console.WriteLine($"Error{ex.Message}");
-}
-
-
-@code{
-    [Parameter]
-    public string? WorkKey { get; set; }
-    @inject HttpClient Http
-    public string? PlainText { get; set; }
-    public OpenLibraryModel? Books { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-
-        Books = await bookstorage.GetBookById(WorkKey!);
 
 
 
     }
-}*@
+
+
+
+
+
+
+
+@*<h1> title: @books.Title</h1>
+<h1> author:@books.Authorname</h1>
+<h1> subtitle: @books.SubTitle</h1>
+<h1> publishdate: @books.Publishdate</h1>
+<p> description: @books.DescriptionHelper</p>
+<h1> subjects: @books.Substring</h1>
+<h1> publishers: @books.PublisherHelper</h1>
+<h1> want to read: @books.Bookshelves?.WantToRead</h1>
+<h1> current reading: @books.Bookshelves?.CurrentReading</h1>
+<h1> already read: @books.Bookshelves?.AlreadyRead</h1>
+
+<img src="@books.CoverHelper" alt="no book" />*@
